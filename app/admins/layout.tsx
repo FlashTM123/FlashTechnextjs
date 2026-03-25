@@ -16,7 +16,28 @@ import {
   X,
   LogOut,
   User,
+  ChevronDown,
 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const menuItems = [
   { name: "Dashboard", href: "/admins", icon: LayoutDashboard },
@@ -27,149 +48,213 @@ const menuItems = [
   { name: "Settings", href: "/admins/settings", icon: Settings },
 ];
 
+function NavSidebar() {
+  const pathname = usePathname();
+
+  return (
+    <div className="flex h-full flex-col bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 border-r border-slate-800">
+      {/* Logo */}
+      <div className="flex h-20 items-center gap-3 border-b border-slate-800 px-6">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 text-white font-bold shadow-lg">
+          ⚡
+        </div>
+        <div className="flex flex-col">
+          <span className="text-lg font-bold text-white">FlashTech</span>
+          <span className="text-xs text-slate-400">Admin Panel</span>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 space-y-1 overflow-y-auto px-4 py-6">
+        {menuItems.map((item) => {
+          const isActive = pathname === item.href;
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={`group flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 ${
+                isActive
+                  ? "bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg shadow-blue-500/30"
+                  : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-100"
+              }`}
+            >
+              <Icon
+                size={20}
+                className={`transition-transform ${isActive ? "scale-110" : "group-hover:scale-110"}`}
+              />
+              <span>{item.name}</span>
+              {isActive && (
+                <div className="ml-auto h-1.5 w-1.5 rounded-full bg-cyan-400"></div>
+              )}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* User section */}
+      <div className="border-t border-slate-800 p-4">
+        <div className="flex items-center gap-3 rounded-lg p-3 hover:bg-slate-800/50 transition-colors cursor-pointer">
+          <Avatar className="h-10 w-10">
+            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-cyan-400 text-white font-bold">
+              AD
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-white">Admin User</p>
+            <p className="text-xs text-slate-400 truncate">admin@flashtech.com</p>
+          </div>
+          <ChevronDown size={16} className="text-slate-400" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Mobile overlay */}
-      {mobileMenuOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
-          onClick={() => setMobileMenuOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <aside
-        className={`fixed top-0 left-0 z-50 h-screen bg-gradient-to-b from-slate-900 to-slate-800 text-white transition-all duration-300
-          w-64
-          ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
-        `}
-      >
-        {/* Logo */}
-        <div className="flex h-16 items-center justify-between border-b border-slate-700 px-4">
-          <Link href="/admins" className="flex items-center gap-2 font-bold">
-            <div className="flex h-8 w-8 items-center justify-center rounded bg-blue-500">
-              F
-            </div>
-            <span>FlashTech</span>
-          </Link>
-          <button onClick={() => setMobileMenuOpen(false)} className="lg:hidden">
-            <X size={20} />
-          </button>
-        </div>
-
-        {/* Navigation */}
-        <nav className="mt-6 space-y-2 px-3">
-          {menuItems.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all
-                  ${
-                    isActive
-                      ? "bg-blue-600 text-white shadow-lg"
-                      : "text-slate-300 hover:bg-slate-700"
-                  }
-                `}
-              >
-                <item.icon size={20} />
-                <span>{item.name}</span>
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* User card */}
-        <div className="absolute bottom-0 left-0 right-0 border-t border-slate-700 p-4">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500" />
-            <div className="flex-1">
-              <p className="text-sm font-medium">Admin</p>
-              <p className="text-xs text-slate-400">admin@flashtech.com</p>
-            </div>
-          </div>
-        </div>
+    <div className="flex h-screen bg-slate-50">
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:flex w-64 flex-col bg-slate-950">
+        <NavSidebar />
       </aside>
 
-      {/* Main content */}
-      <div className="lg:ml-64">
+      {/* Main Content */}
+      <div className="flex flex-1 flex-col overflow-hidden">
         {/* Header */}
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 shadow-sm lg:px-6">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setMobileMenuOpen(true)}
-              className="rounded-lg p-2 hover:bg-slate-100 lg:hidden"
-            >
-              <Menu size={20} />
-            </button>
+        <header className="sticky top-0 z-30 border-b border-slate-200 bg-white shadow-sm">
+          <div className="flex h-20 items-center justify-between gap-4 px-4 lg:px-8">
+            {/* Left */}
+            <div className="flex items-center gap-4">
+              {/* Mobile Menu Button */}
+              <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+                <SheetTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="lg:hidden text-slate-600"
+                  >
+                    {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-64 p-0">
+                  <SheetHeader className="sr-only">
+                    <SheetTitle>Navigation</SheetTitle>
+                  </SheetHeader>
+                  <NavSidebar />
+                </SheetContent>
+              </Sheet>
 
-            {/* Search */}
-            <div className="hidden md:block">
-              <div className="relative">
-                <Search
-                  size={18}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                />
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="h-10 w-64 rounded-lg border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-                />
+              {/* Search Bar */}
+              <div className="hidden md:flex flex-1 max-w-sm">
+                <div className="relative w-full">
+                  <Search
+                    size={18}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                  />
+                  <Input
+                    placeholder="Search users, orders..."
+                    className="pl-10 pr-4 bg-slate-100 border-0 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:bg-white"
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Right side */}
-          <div className="flex items-center gap-3">
-            {/* Notifications */}
-            <button className="relative rounded-lg p-2 hover:bg-slate-100">
-              <Bell size={20} className="text-slate-600" />
-              <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500" />
-            </button>
+            {/* Right */}
+            <div className="flex items-center gap-3 lg:gap-4">
+              {/* Notifications */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="relative text-slate-600 hover:text-slate-900"
+                  >
+                    <Bell size={20} />
+                    <Badge className="absolute -right-2 -top-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-red-500 hover:bg-red-600">
+                      5
+                    </Badge>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-80">
+                  <DropdownMenuLabel className="text-base">
+                    Notifications
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {[
+                    "New order #12345 from John Doe",
+                    "Product review pending approval",
+                    "Server maintenance scheduled",
+                    "New user registration",
+                    "Payment processing failed",
+                  ].map((notif, i) => (
+                    <DropdownMenuItem key={i} className="py-2">
+                      <div className="flex items-start gap-2">
+                        <div className="h-2 w-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0"></div>
+                        <div className="text-sm text-slate-600">{notif}</div>
+                      </div>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-            {/* User menu */}
-            <div className="relative">
-              <button
-                onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center gap-2 rounded-lg p-1.5 hover:bg-slate-100"
-              >
-                <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600" />
-              </button>
-
-              {userMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 rounded-lg border border-slate-200 bg-white py-1 shadow-lg">
-                  <button className="flex w-full items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">
-                    <User size={16} />
-                    Profile
-                  </button>
-                  <button className="flex w-full items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">
-                    <Settings size={16} />
-                    Settings
-                  </button>
-                  <hr />
-                  <button className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-slate-100">
-                    <LogOut size={16} />
-                    Logout
-                  </button>
-                </div>
-              )}
+              {/* User Menu */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="gap-2 px-2 lg:px-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                  >
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="bg-gradient-to-br from-blue-500 to-cyan-400 text-white text-xs font-bold">
+                        AD
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="hidden lg:inline text-sm font-medium">
+                      Admin
+                    </span>
+                    <ChevronDown size={16} />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-semibold">Admin User</p>
+                      <p className="text-xs text-slate-500">
+                        admin@flashtech.com
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="cursor-pointer">
+                    <User size={16} className="mr-2" />
+                    <span>Profile Settings</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <Settings size={16} className="mr-2" />
+                    <span>Preferences</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="cursor-pointer text-red-600">
+                    <LogOut size={16} className="mr-2" />
+                    <span>Logout</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </header>
 
-        {/* Page content */}
-        <main className="p-6">{children}</main>
+        {/* Page Content */}
+        <main className="flex-1 overflow-auto bg-slate-50">
+          <div className="p-4 lg:p-8">{children}</div>
+        </main>
       </div>
     </div>
   );
