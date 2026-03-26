@@ -3,10 +3,23 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, LogIn, AlertCircle, CheckCircle } from "lucide-react";
+import { 
+  Eye, 
+  EyeOff, 
+  LogIn, 
+  AlertCircle, 
+  CheckCircle2, 
+  Mail, 
+  Lock, 
+  ArrowRight,
+  ShieldCheck,
+  Zap
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useAuth } from "@/app/context/auth-context";
+import { cn } from "@/lib/utils";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -14,7 +27,6 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -25,200 +37,131 @@ export default function LoginForm() {
     setSuccess("");
     setLoading(true);
 
-    if (!email.trim()) {
-      setError("Email is required");
-      setLoading(false);
-      return;
-    }
-
-    if (!password) {
-      setError("Password is required");
-      setLoading(false);
-      return;
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Please enter a valid email address");
+    if (!email.trim() || !password) {
+      setError("Vui lòng nhập đầy đủ thông tin");
       setLoading(false);
       return;
     }
 
     try {
       await login(email, password);
-      setSuccess("Login successful! Redirecting...");
-      // Redirect to admin dashboard after 500ms
+      setSuccess("Xác thực thành công! Đang chuyển hướng...");
       setTimeout(() => {
         router.push("/admins");
-      }, 500);
+      }, 800);
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Invalid email or password";
+      const errorMessage = err instanceof Error ? err.message : "Email hoặc mật khẩu không đúng";
       setError(errorMessage);
       setLoading(false);
     }
   };
 
   return (
-    <div className="w-full max-w-md">
-      <div className="bg-white rounded-lg shadow-md border border-slate-200 p-8">
-        {/* Header */}
-        <div className="flex flex-col items-center mb-8">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-cyan-500 text-white font-bold mb-3">
-            ⚡
+    <div className="w-full max-w-md perspective-1000">
+      <div className="relative overflow-hidden rounded-[32px] border border-white/20 bg-white/80 p-10 shadow-2xl backdrop-blur-2xl transition-all duration-500 hover:shadow-indigo-500/10 dark:bg-slate-900/80">
+        
+        {/* Animated Background Glow */}
+        <div className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-indigo-500/20 blur-3xl animate-pulse" />
+        <div className="absolute -bottom-20 -left-20 h-40 w-40 rounded-full bg-blue-500/10 blur-3xl animate-pulse" />
+
+        {/* Brand Header */}
+        <div className="relative mb-10 flex flex-col items-center">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-xl shadow-indigo-500/30 rotate-3 hover:rotate-0 transition-transform duration-300">
+            <Zap className="h-8 w-8 fill-white" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">FlashTech Admin</h1>
-          <p className="text-sm text-slate-500 mt-1">Sign in to your account</p>
+          <h1 className="text-3xl font-black tracking-tighter text-slate-900 dark:text-white">FlashTech Admin</h1>
+          <p className="mt-2 text-sm font-bold text-slate-400 uppercase tracking-widest opacity-60">Terminal Authentication</p>
         </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className="mb-6 flex items-start gap-3 rounded-lg bg-red-50 border border-red-200 p-4">
-            <AlertCircle size={18} className="text-red-600 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-red-800">{error}</p>
-          </div>
-        )}
+        {/* Feedback Messages */}
+        <div className="space-y-4 mb-8">
+          {error && (
+            <div className="flex items-center gap-3 rounded-2xl bg-rose-50 border border-rose-100 p-4 animate-in slide-in-from-top-2">
+              <AlertCircle className="h-5 w-5 text-rose-500 flex-shrink-0" />
+              <p className="text-xs font-bold text-rose-700">{error}</p>
+            </div>
+          )}
+          {success && (
+            <div className="flex items-center gap-3 rounded-2xl bg-emerald-50 border border-emerald-100 p-4 animate-in slide-in-from-top-2">
+              <CheckCircle2 className="h-5 w-5 text-emerald-500 flex-shrink-0" />
+              <p className="text-xs font-bold text-emerald-700">{success}</p>
+            </div>
+          )}
+        </div>
 
-        {/* Success Message */}
-        {success && (
-          <div className="mb-6 flex items-start gap-3 rounded-lg bg-green-50 border border-green-200 p-4">
-            <CheckCircle size={18} className="text-green-600 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-green-800">{success}</p>
-          </div>
-        )}
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Email */}
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
-              Email Address
-            </label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={loading}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:opacity-50"
-            />
-          </div>
-
-          {/* Password */}
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
-              Password
-            </label>
+        {/* Form Body */}
+        <form onSubmit={handleSubmit} className="space-y-6 relative">
+          <div className="space-y-2 group">
+            <Label className="ml-1 text-[10px] font-black uppercase tracking-widest text-slate-400 group-focus-within:text-indigo-600 transition-colors">Địa chỉ Email</Label>
             <div className="relative">
+              <Mail className="absolute left-4 top-3.5 h-5 w-5 text-slate-300 group-focus-within:text-indigo-400" />
               <Input
-                id="password"
+                type="email"
+                placeholder="admin@flashtech.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
+                className="h-12 w-full rounded-xl border-none bg-slate-100/50 pl-12 pr-4 font-bold text-slate-900 placeholder:text-slate-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 transition-all"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2 group">
+             <div className="flex justify-between items-center px-1">
+                <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-focus-within:text-indigo-600 transition-colors">Mật khẩu</Label>
+                <Link href="#" className="text-[10px] font-black text-indigo-500 hover:text-indigo-700 uppercase tracking-widest transition-colors">Quên mật khẩu?</Link>
+             </div>
+             <div className="relative">
+              <Lock className="absolute left-4 top-3.5 h-5 w-5 text-slate-300 group-focus-within:text-indigo-400" />
+              <Input
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:opacity-50 pr-10"
+                className="h-12 w-full rounded-xl border-none bg-slate-100/50 pl-12 pr-12 font-bold text-slate-900 placeholder:text-slate-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 transition-all"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                disabled={loading}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 disabled:opacity-50"
+                className="absolute right-4 top-3.5 text-slate-300 hover:text-indigo-500 transition-colors"
+                tabIndex={-1}
               >
-                {showPassword ? (
-                  <EyeOff size={18} />
-                ) : (
-                  <Eye size={18} />
-                )}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
           </div>
 
-          {/* Remember & Forgot */}
-          <div className="flex items-center justify-between">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                disabled={loading}
-                className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50"
-              />
-              <span className="text-sm text-slate-600">Remember me</span>
-            </label>
-            <Link
-              href="/forgot-password"
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-            >
-              Forgot password?
-            </Link>
+          <div className="flex items-center gap-2 px-1">
+             <input type="checkbox" id="remember" className="h-4 w-4 rounded border-slate-200 text-indigo-600 focus:ring-indigo-500" />
+             <label htmlFor="remember" className="text-xs font-bold text-slate-400 select-none">Duy trì đăng nhập</label>
           </div>
 
-          {/* Button */}
           <Button
             type="submit"
             disabled={loading}
-            className="w-full h-10 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-6"
+            className="group h-14 w-full rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-2xl shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-50"
           >
             {loading ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Signing in...
-              </>
+              <div className="flex items-center gap-2">
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                <span className="font-black uppercase tracking-widest text-sm text-indigo-100">Đang nhận diện...</span>
+              </div>
             ) : (
-              <>
-                <LogIn size={18} />
-                Sign In
-              </>
+              <div className="flex items-center justify-center gap-2">
+                <span className="font-black uppercase tracking-[0.2em] text-sm">Đăng nhập máy chủ</span>
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </div>
             )}
           </Button>
         </form>
 
-        {/* Divider */}
-        <div className="mt-6 flex items-center gap-3">
-          <div className="flex-1 h-px bg-slate-200"></div>
-          <span className="text-xs text-slate-500 font-medium">Demo Accounts</span>
-          <div className="flex-1 h-px bg-slate-200"></div>
+        {/* Support Link */}
+        <div className="mt-10 pt-6 border-t border-slate-100 text-center">
+           <p className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center justify-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-emerald-500" /> Secure Terminal Session
+           </p>
         </div>
-
-        {/* Demo Credentials with Permissions */}
-        <div className="mt-6 space-y-3">
-          {/* Admin Account */}
-          <div className="bg-blue-50 rounded-lg border border-blue-200 p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-2 h-2 rounded-full bg-blue-600"></div>
-              <p className="text-xs font-semibold text-blue-900">Administrator</p>
-            </div>
-            <p className="text-xs text-blue-700 mb-2">
-              Email: <span className="font-mono bg-white px-2 py-1 rounded">admin@flashtech.com</span>
-            </p>
-            <p className="text-xs text-blue-700 mb-2">
-              Password: <span className="font-mono bg-white px-2 py-1 rounded">password</span>
-            </p>
-            <p className="text-xs text-blue-600">
-              ✓ Full access to all features and settings
-            </p>
-          </div>
-
-          {/* Note about permissions */}
-          <div className="bg-slate-100 rounded-lg border border-slate-200 p-3">
-            <p className="text-xs font-medium text-slate-700 mb-1">📋 Permissions:</p>
-            <ul className="text-xs text-slate-600 space-y-1">
-              <li>• Manage users & roles</li>
-              <li>• View analytics & reports</li>
-              <li>• Configure products & orders</li>
-              <li>• Access system settings</li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <p className="mt-6 text-center text-sm text-slate-600">
-          Need help?{" "}
-          <Link href="/support" className="text-blue-600 hover:text-blue-700 font-medium">
-            Contact support
-          </Link>
-        </p>
       </div>
     </div>
   );
