@@ -6,6 +6,8 @@ Một nền tảng quản lý doanh nghiệp hiện đại được xây dựng 
 
 ### Frontend (my-app/)
 - ⚡ **Modern Admin Dashboard** - Giao diện đẹp, responsive
+- 🔐 **Authentication System** - Login/Logout với Context API
+- 👤 **User Management** - Hiển thị thông tin user đang login
 - 🎨 **Shadcn/ui Components** - UI components chất lượng cao
 - 🎭 **Dark Mode Support** - Hỗ trợ chế độ tối
 - 📱 **Mobile Responsive** - Hoạt động tốt trên mọi thiết bị
@@ -67,14 +69,24 @@ Truy cập: **http://localhost:3000**
 FlashTechNextjs/
 ├── my-app/                          # Next.js App
 │   ├── app/
+│   │   ├── login/
+│   │   │   ├── page.tsx            # Login Page
+│   │   │   └── components/
+│   │   │       └── login-form.tsx   # Login Form Component
 │   │   ├── admins/
-│   │   │   ├── layout.tsx          # Admin Layout
+│   │   │   ├── layout.tsx          # Admin Layout (Protected)
 │   │   │   ├── page.tsx            # Dashboard
 │   │   │   ├── users/              # Users Management
 │   │   │   ├── products/           # Products Management
 │   │   │   ├── orders/             # Orders Management
 │   │   │   ├── analytics/          # Analytics
 │   │   │   └── settings/           # Settings
+│   │   ├── context/
+│   │   │   └── auth-context.tsx    # Authentication Context
+│   │   ├── api/
+│   │   │   └── auth/
+│   │   │       └── login/
+│   │   │           └── route.ts    # Login API Endpoint
 │   │   ├── globals.css             # Global Styles
 │   │   └── layout.tsx              # Root Layout
 │   ├── components/
@@ -132,6 +144,8 @@ enum Role {
 | **Prisma** | 6 | ORM |
 | **MongoDB** | Latest | Database |
 | **Lucide React** | 1.6.0 | Icons |
+| **React Context** | 19 | State Management |
+| **Next.js App Router** | 16.2.1 | Routing |
 
 ## 📦 Scripts
 
@@ -154,6 +168,26 @@ npm run lint            # Run ESLint
 
 ## 🔐 Xác Thực & Phân Quyền
 
+### Authentication Flow
+- **Login Page** (`/login`) - Form đăng nhập với validation
+- **API Route** (`/api/auth/login`) - Xử lý xác thực
+- **AuthContext** - Lưu user state + localStorage
+- **Protected Routes** - Admin routes yêu cầu đăng nhập
+- **Logout** - Xóa session + redirect về login
+
+### Demo Credentials
+```
+Email: admin@flashtech.com
+Password: password
+
+Permissions:
+✓ Full access to all features and settings
+✓ Manage users & roles
+✓ View analytics & reports
+✓ Configure products & orders
+✓ Access system settings
+```
+
 ### Roles & Permissions
 - **USER**: Người dùng thường
 - **ADMIN**: Quản trị viên (Toàn quyền)
@@ -164,11 +198,26 @@ npm run lint            # Run ESLint
 - Admin có thể khóa/mở khóa tài khoản bằng cột `isBlocked`
 - Tài khoản bị khóa không thể đăng nhập
 
-## 📱 Responsive Design
+## 🎯 Hướng Dẫn Sử Dụng
 
-- **Mobile** (480px): Full-width layout
-- **Tablet** (768px): 2-column grid
-- **Desktop** (1024px+): 4-column grid, fixed sidebar
+### Login & Access Admin
+1. Truy cập: **http://localhost:3000/login**
+2. Nhập demo credentials:
+   - Email: `admin@flashtech.com`
+   - Password: `password`
+3. Click "Sign In" → Tự động redirect về Dashboard
+4. Dashboard hiển thị thông tin user đang login
+5. Click avatar → Dropdown menu → Click "Logout" để đăng xuất
+
+### Protected Routes
+- Login page (`/login`) - Public, không cần đăng nhập
+- Admin pages (`/admins/*`) - Protected, yêu cầu đăng nhập
+- Nếu truy cập `/admins` chưa login → Tự động redirect về `/login`
+
+### User Info Display
+- Sidebar: Hiển thị avatar + tên user
+- Header: Hiển thị user menu với email
+- Responsive: Tên user ẩn trên mobile, hiện trên desktop
 
 ## 🎨 Customization
 
@@ -238,5 +287,6 @@ MIT License - xem file [LICENSE](LICENSE)
 
 ---
 
-**Last Updated**: March 2026
+**Last Updated**: March 26, 2026
 **Status**: Active Development
+**Recent Features**: Login/Logout System, Authentication Context, Protected Routes
