@@ -1,36 +1,242 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FlashTech - Modern Admin Dashboard
 
-## Getting Started
+Một nền tảng quản lý doanh nghiệp hiện đại được xây dựng bằng **Next.js 16**, **React 19**, **TypeScript**, **Tailwind CSS 4**, và **Shadcn/ui**.
 
-First, run the development server:
+## 🎯 Tính Năng
 
+### Frontend (my-app/)
+- ⚡ **Modern Admin Dashboard** - Giao diện đẹp, responsive
+- 🎨 **Shadcn/ui Components** - UI components chất lượng cao
+- 🎭 **Dark Mode Support** - Hỗ trợ chế độ tối
+- 📱 **Mobile Responsive** - Hoạt động tốt trên mọi thiết bị
+- 🔔 **Real-time Notifications** - Thông báo real-time
+- 📊 **Dashboard Analytics** - Biểu đồ và thống kê
+- 👥 **User Management** - Quản lý người dùng
+- 📦 **Product Management** - Quản lý sản phẩm
+- 🛒 **Order Management** - Quản lý đơn hàng
+
+### Backend (Prisma + MongoDB)
+- 🗄️ **MongoDB Integration** - Cơ sở dữ liệu NoSQL
+- 🔐 **User Authentication** - Xác thực người dùng
+- 👨‍💼 **Role-Based Access Control** - Phân quyền (User, Admin, Moderator, Employee)
+- 🛡️ **Account Blocking** - Khóa tài khoản
+- 📝 **Database Seeding** - Dữ liệu khởi tạo
+
+## 📋 Yêu Cầu
+
+- **Node.js**: v18 hoặc cao hơn
+- **npm**: v9 hoặc cao hơn (hoặc yarn, pnpm)
+- **MongoDB**: Cloud (Atlas) hoặc Local
+
+## 🚀 Hướng Dẫn Cài Đặt
+
+### 1. Clone Repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd FlashTechNextjs
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Cài Đặt Dependencies
+```bash
+cd my-app
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Cấu Hình Environment
+Tạo file `.env.local` trong thư mục `my-app`:
+```env
+DATABASE_URL="mongodb+srv://username:password@cluster.mongodb.net/flashtech_nextjs?retryWrites=true&w=majority"
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Khởi Tạo Prisma
+```bash
+npx prisma generate
+npx prisma db seed
+```
 
-## Learn More
+### 5. Chạy Development Server
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Truy cập: **http://localhost:3000**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📁 Cấu Trúc Dự Án
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+FlashTechNextjs/
+├── my-app/                          # Next.js App
+│   ├── app/
+│   │   ├── admins/
+│   │   │   ├── layout.tsx          # Admin Layout
+│   │   │   ├── page.tsx            # Dashboard
+│   │   │   ├── users/              # Users Management
+│   │   │   ├── products/           # Products Management
+│   │   │   ├── orders/             # Orders Management
+│   │   │   ├── analytics/          # Analytics
+│   │   │   └── settings/           # Settings
+│   │   ├── globals.css             # Global Styles
+│   │   └── layout.tsx              # Root Layout
+│   ├── components/
+│   │   └── ui/                     # Shadcn UI Components
+│   ├── lib/
+│   │   └── utils.ts                # Utilities
+│   ├── public/                      # Static Files
+│   ├── package.json
+│   └── tailwind.config.ts
+├── prisma/
+│   ├── schema.prisma               # Database Schema
+│   ├── seed.ts                     # Database Seeding
+│   └── migrations/                 # Database Migrations
+├── generated/
+│   └── prisma/                     # Prisma Client (Generated)
+├── prisma.config.ts                # Prisma Config
+├── .env.local                      # Environment Variables
+└── README.md
+```
 
-## Deploy on Vercel
+## 🗄️ Database Schema
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### User Model
+```prisma
+model User {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  email        String   @unique
+  password     String
+  phone_number String   @unique
+  address      String
+  role         Role     @default(USER)    // USER, ADMIN, MODERATOR, EMPLOYEE
+  isBlocked    Boolean  @default(false)   // Account lock status
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+  EMPLOYEE
+}
+```
+
+## 🛠️ Công Nghệ Sử Dụng
+
+| Công Nghệ | Phiên Bản | Mục Đích |
+|-----------|----------|---------|
+| **Next.js** | 16.2.1 | Framework React |
+| **React** | 19.2.4 | UI Library |
+| **TypeScript** | 5 | Type Safety |
+| **Tailwind CSS** | 4 | Styling |
+| **Shadcn/ui** | Latest | UI Components |
+| **Prisma** | 6 | ORM |
+| **MongoDB** | Latest | Database |
+| **Lucide React** | 1.6.0 | Icons |
+
+## 📦 Scripts
+
+```bash
+# Development
+npm run dev              # Start dev server (port 3000)
+
+# Production
+npm run build           # Build for production
+npm start               # Start production server
+
+# Database
+npx prisma generate    # Generate Prisma Client
+npx prisma db seed     # Seed database
+npx prisma studio      # Open Prisma Studio
+
+# Linting
+npm run lint            # Run ESLint
+```
+
+## 🔐 Xác Thực & Phân Quyền
+
+### Roles & Permissions
+- **USER**: Người dùng thường
+- **ADMIN**: Quản trị viên (Toàn quyền)
+- **MODERATOR**: Người kiểm duyệt (Quyền hạn)
+- **EMPLOYEE**: Nhân viên (Quyền giới hạn)
+
+### Account Lock
+- Admin có thể khóa/mở khóa tài khoản bằng cột `isBlocked`
+- Tài khoản bị khóa không thể đăng nhập
+
+## 📱 Responsive Design
+
+- **Mobile** (480px): Full-width layout
+- **Tablet** (768px): 2-column grid
+- **Desktop** (1024px+): 4-column grid, fixed sidebar
+
+## 🎨 Customization
+
+### Thay Đổi Màu
+Chỉnh sửa gradient colors trong `app/admins/layout.tsx`:
+```tsx
+className="bg-gradient-to-r from-blue-600 to-cyan-500"
+```
+
+### Thay Đổi Font
+Sửa trong `app/globals.css`:
+```css
+--font-sans: 'Your Font', sans-serif;
+```
+
+## 🐛 Troubleshooting
+
+### Lỗi Module Not Found
+```bash
+rm -rf node_modules .next
+npm install
+npm run dev
+```
+
+### Lỗi Prisma Client
+```bash
+npx prisma generate
+```
+
+### Lỗi Database Connection
+```bash
+# Kiểm tra DATABASE_URL trong .env.local
+# Đảm bảo MongoDB đang chạy
+# Kiểm tra network access trong MongoDB Atlas
+```
+
+## 📚 Tài Liệu
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Prisma Documentation](https://www.prisma.io/docs)
+- [Shadcn/ui Documentation](https://ui.shadcn.com)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [MongoDB Documentation](https://docs.mongodb.com)
+
+## 🤝 Contribution
+
+Contributions are welcome! Vui lòng:
+1. Fork repository
+2. Tạo branch mới (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
+
+## 📄 License
+
+MIT License - xem file [LICENSE](LICENSE)
+
+## 👨‍💻 Authors
+
+- **FlashTech Team** - Initial work
+
+## 📞 Support
+
+- Email: support@flashtech.com
+- Issues: [GitHub Issues](https://github.com/flashtech/issues)
+- Documentation: [Wiki](https://github.com/flashtech/wiki)
+
+---
+
+**Last Updated**: March 2026
+**Status**: Active Development
