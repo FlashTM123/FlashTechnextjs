@@ -281,7 +281,7 @@ MIT License - xem file [LICENSE](LICENSE)
 
 ## 📞 Support
 
-- Email: support@flashtech.com
+- Email: nhatduong019@gmail.com
 - Issues: [GitHub Issues](https://github.com/flashtech/issues)
 - Documentation: [Wiki](https://github.com/flashtech/wiki)
 
