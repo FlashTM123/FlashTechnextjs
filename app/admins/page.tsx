@@ -12,6 +12,12 @@ import {
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Admin Dashboard - FlashTech",
+  description: "Overview of key metrics and recent activity for FlashTech admins",
+};
 import {
   DropdownMenu,
   DropdownMenuContent,
