@@ -4,8 +4,9 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../my-app/generated/prisma"
+  provider      = "prisma-client-js"
+  output        = "../generated/prisma"
+  binaryTargets = ["native", "windows", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -31,4 +32,62 @@ model User {
   isBlocked    Boolean  @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+// Định nghĩa các tập giá trị (Enums)
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  HIDDEN
+}
+
+enum CustomerStatus {
+  ACTIVE // Đang hoạt động bình thường
+  BLOCKED // Đang bị khóa (thay cho isBlocked)
+  PENDING // Chờ xác thực (email/sđt)
+  INACTIVE // Ngừng hoạt động (khách tự đóng tài khoản)
+}
+
+enum CustomerTier {
+  BRONZE // Đồng (Mặc định)
+  SILVER // Bạc
+  GOLD // Vàng
+  DIAMOND // Kim cương
+}
+
+model Customer {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Định danh khách hàng (Ví dụ: KH-2024-001)
+  customer_id String @unique
+
+  // Thông tin cơ bản
+  full_name    String
+  email        String  @unique
+  password     String // Lưu hash bằng bcrypt
+  phone_number String? @unique
+  avatar       String? @default("https://github.com/shadcn.png")
+
+  // Thông tin cá nhân & Địa chỉ
+  gender        Gender    @default(MALE)
+  date_of_birth DateTime?
+  address       String?
+  city          String? // Thêm tỉnh/thành để dễ lọc khách hàng
+
+  // Phân loại & Trạng thái
+  status CustomerStatus @default(ACTIVE)
+  tier   CustomerTier   @default(BRONZE) // Phân hạng khách hàng để ưu đãi
+  points Int            @default(0) // Điểm tích lũy mua hàng
+
+  // Bảo mật & Hệ thống
+  isVerified Boolean   @default(false) // Đã xác thực email chưa
+  lastLogin  DateTime?
+  adminNote  String? // Ghi chú của Admin về khách này (ví dụ: khách hay boom hàng)
+
+  // Thời gian
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("customer")
 }

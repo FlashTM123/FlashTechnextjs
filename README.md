@@ -2,6 +2,14 @@
 
 Một nền tảng quản lý doanh nghiệp hiện đại được xây dựng bằng **Next.js 16**, **React 19**, **TypeScript**, **Tailwind CSS 4**, và **Shadcn/ui**.
 
+## 🌟 Cập Nhật Mới Nhất (28/03/2026)
+
+- 🎨 **Premium Admin Dashboard Redesign**: Giao diện Layout quản trị viên hoàn toàn mới (Premium), đồng bộ và cao cấp.
+- 🌓 **Chế Độ Giao Diện (Light/Dark Mode)**: Tương thích hoàn toàn giao diện Sáng và Tối (Tailwind CSS Dark mode).
+- 👥 **Customer Management**: Nâng cấp module quản lý khách hàng tại `users-client.tsx`, hoàn thiện hiển thị theo Theme.
+- 🔌 **API Endpoints**: Hoàn thiện các API Routes xử lý dữ liệu khách hàng (`/api/admin/customers/[id]`).
+- 🛠️ **Cấu hình & Database**: Cập nhật kết nối và logic liên quan đến Prisma & MongoDB.
+
 ## 🎯 Tính Năng
 
 ### Frontend (my-app/)
@@ -287,6 +295,6 @@ MIT License - xem file [LICENSE](LICENSE)
 
 ---
 
-**Last Updated**: March 26, 2026
+**Last Updated**: March 28, 2026
 **Status**: Active Development
-**Recent Features**: Login/Logout System, Authentication Context, Protected Routes
+**Recent Features**: Premium Admin Dashboard, Adaptive Light/Dark Mode, Customer Management APIs & User UI

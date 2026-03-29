@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "./context/auth-context";
+import { ThemeProvider } from "@/components/theme-provider";
 
-// Cấu hình font Inter làm font chính duy nhất để đảm bảo đồng bộ Windows/Linux
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin", "vietnamese"],
@@ -18,17 +18,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html
-      lang="vi"
-      className={`${inter.variable} h-full antialiased`}
-      suppressHydrationWarning
-    >
-      <body className={`min-h-full flex flex-col font-sans selection:bg-indigo-100 selection:text-indigo-900`}>
-        <AuthProvider>{children}</AuthProvider>
+    <html suppressHydrationWarning lang="vi" className={`${inter.variable} h-full antialiased`}>
+      <body className="min-h-full flex flex-col font-sans selection:bg-indigo-100 selection:text-indigo-900 bg-background text-foreground">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <AuthProvider>{children}</AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

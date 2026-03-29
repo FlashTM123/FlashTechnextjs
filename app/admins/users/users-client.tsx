@@ -39,15 +39,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  SheetFooter,
-  SheetDescription,
-} from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
 // ────────────────────────────────────────────────
@@ -75,17 +66,23 @@ const ROLES = [
 // ────────────────────────────────────────────────
 // Helpers
 // ────────────────────────────────────────────────
-const getRoleColor = (role: string) => {
+const getRoleBadgeClass = (role: string) => {
   switch (role) {
-    case "ADMIN":     return "bg-rose-100 text-rose-700 border-rose-200";
-    case "MODERATOR": return "bg-sky-100 text-sky-700 border-sky-200";
-    case "EMPLOYEE":  return "bg-indigo-100 text-indigo-700 border-indigo-200";
-    default:          return "bg-slate-100 text-slate-600 border-slate-200";
+    case "ADMIN":
+      return "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20";
+    case "MODERATOR":
+      return "bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20";
+    case "EMPLOYEE":
+      return "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20";
+    default:
+      return "bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20";
   }
 };
 
-const getStatusColor = (status: string) =>
-  status === "active" ? "bg-emerald-100 text-emerald-700 border-emerald-200" : "bg-red-100 text-red-700 border-red-200";
+const getStatusBadgeClass = (status: string) =>
+  status === "active"
+    ? "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
+    : "text-rose-600 dark:text-rose-400 bg-rose-500/10 border-rose-500/20";
 
 // ────────────────────────────────────────────────
 // Main Component
@@ -95,6 +92,7 @@ export default function UsersClient() {
   const [total, setTotal]           = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading]       = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const [searchTerm, setSearchTerm]   = useState("");
   const [roleFilter, setRoleFilter]   = useState("all");
@@ -121,10 +119,26 @@ export default function UsersClient() {
       const params = new URLSearchParams({ search: searchTerm, role: roleFilter, status: statusFilter, page: String(currentPage), limit: String(itemsPerPage) });
       const res = await fetch(`/api/admin/users?${params}`);
       const data = await res.json();
-      setUsers(data.users);
-      setTotal(data.total);
-      setTotalPages(data.totalPages);
-    } catch (err) { console.error(err); } finally { setLoading(false); }
+      if (!res.ok) {
+        setFetchError(data.message || `Lỗi ${res.status}`);
+        setUsers([]);
+        setTotal(0);
+        setTotalPages(1);
+        return;
+      }
+      setFetchError(null);
+      setUsers(data.users || []);
+      setTotal(data.total ?? 0);
+      setTotalPages(
+        data.totalPages ?? Math.max(1, Math.ceil((data.total ?? 0) / itemsPerPage)),
+      );
+    } catch (err) {
+      console.error(err);
+      setFetchError("Không tải được danh sách.");
+      setUsers([]);
+      setTotal(0);
+      setTotalPages(1);
+    } finally { setLoading(false); }
   }, [searchTerm, roleFilter, statusFilter, currentPage, itemsPerPage]);
 
   useEffect(() => {
@@ -167,158 +181,293 @@ export default function UsersClient() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50 p-4 md:p-8">
-      <div className="mx-auto max-w-7xl space-y-8">
+    <div className="min-h-screen bg-transparent dark:bg-[url('/noise.svg')] dark:bg-blend-multiply text-slate-800 dark:text-slate-200 p-4 md:p-8 animate-in fade-in duration-1000 relative transition-colors">
+      <div className="mx-auto max-w-[1400px] space-y-8 relative z-10">
 
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div><h1 className="text-4xl font-extrabold text-slate-900 leading-none">Cộng sự</h1><p className="mt-3 text-slate-500 font-medium italic opacity-80">Flash Tech Administrative Terminal</p></div>
+          <div>
+            <h1 className="text-4xl text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 font-extrabold leading-none tracking-tight">
+              Cộng sự
+            </h1>
+            <p className="mt-3 text-slate-500 dark:text-slate-400 font-medium uppercase tracking-widest text-[11px]">
+              Flash Tech Administrative Terminal
+            </p>
+          </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="icon" onClick={() => fetchUsers()} className="h-11 w-11 rounded-2xl bg-white shadow-sm border-slate-100 hover:rotate-180 transition-transform duration-500"><RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /></Button>
-            <Button onClick={() => { setEditingUser(null); setFormData({ name: "", email: "", password: "", phone: "", address: "", role: "USER", status: "active" }); setIsSheetOpen(true); }} className="h-11 px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-xl shadow-indigo-100 transition-all font-black flex items-center gap-2 active:scale-95"><Plus className="h-5 w-5" /> THÊM MỚI</Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => fetchUsers()}
+              className="h-11 w-11 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/10 hover:rotate-180 transition-all duration-500 shadow-sm dark:shadow-xl"
+            >
+              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+            </Button>
+            <Button
+              onClick={() => {
+                setEditingUser(null);
+                setFormData({
+                  name: "",
+                  email: "",
+                  password: "",
+                  phone: "",
+                  address: "",
+                  role: "USER",
+                  status: "active",
+                });
+                setIsSheetOpen(true);
+              }}
+              className="h-11 px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-black flex items-center gap-2 shadow-md shadow-indigo-500/20 dark:shadow-indigo-900/40 border border-indigo-500/20 transition-all active:scale-[0.98]"
+            >
+              <Plus className="h-5 w-5" /> THÊM MỚI
+            </Button>
           </div>
         </div>
 
+        {fetchError && (
+          <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm font-semibold text-rose-700 dark:text-rose-300">
+            {fetchError}
+          </div>
+        )}
+
         {/* Filters */}
-        <div className="bg-white p-2 rounded-[28px] shadow-sm border border-slate-200 flex flex-col md:flex-row items-center gap-2">
+        <div className="bg-white dark:bg-white/5 p-2 rounded-[28px] shadow-sm dark:shadow-2xl backdrop-blur-xl border border-slate-200 dark:border-white/10 flex flex-col md:flex-row items-center gap-2 transition-colors">
            <div className="relative flex-1 w-full group">
-             <Search className="absolute left-5 top-3.5 h-5 w-5 text-slate-300 group-focus-within:text-indigo-500 transition-colors" />
-             <input className="w-full h-12 pl-14 pr-4 bg-transparent border-none focus:ring-0 text-slate-700 placeholder-slate-400 font-bold" placeholder="Tìm tên, email hoặc SĐT..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+             <Search className="absolute left-5 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 dark:group-focus-within:text-indigo-400 transition-colors" />
+             <input
+               className="w-full h-12 pl-14 pr-4 bg-transparent border-none focus:ring-0 text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 font-bold outline-none transition-colors"
+               placeholder="Tìm tên, email hoặc SĐT..."
+               value={searchTerm}
+               onChange={(e) => setSearchTerm(e.target.value)}
+             />
            </div>
            <div className="flex items-center gap-2 p-1">
-              <select className="h-10 px-4 rounded-xl bg-slate-50 border-none text-[10px] font-black uppercase tracking-widest text-slate-500 cursor-pointer" value={roleFilter} onChange={e => setRoleFilter(e.target.value)}>
-                 <option value="all">Quyền hạn</option>
-                 {ROLES.map(r => <option key={r.id} value={r.id}>{r.id}</option>)}
+              <select
+                className="h-10 px-4 rounded-xl bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 cursor-pointer outline-none shadow-inner transition-colors"
+                value={roleFilter}
+                onChange={(e) => setRoleFilter(e.target.value)}
+              >
+                 <option value="all" className="bg-white dark:bg-[#0A0A0B]">Quyền hạn</option>
+                 {ROLES.map((r) => (
+                   <option key={r.id} value={r.id} className="bg-white dark:bg-[#0A0A0B]">
+                     {r.id}
+                   </option>
+                 ))}
               </select>
-              <select className="h-10 px-4 rounded-xl bg-slate-50 border-none text-[10px] font-black uppercase tracking-widest text-slate-500 cursor-pointer" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
-                 <option value="all">Trạng thái</option>
-                 <option value="active">Active</option>
-                 <option value="blocked">Locked</option>
+              <select
+                className="h-10 px-4 rounded-xl bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 cursor-pointer outline-none shadow-inner transition-colors"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                 <option value="all" className="bg-white dark:bg-[#0A0A0B]">Trạng thái</option>
+                 <option value="active" className="bg-white dark:bg-[#0A0A0B]">Active</option>
+                 <option value="blocked" className="bg-white dark:bg-[#0A0A0B]">Locked</option>
               </select>
            </div>
         </div>
 
         {/* User Table */}
-        <div className="bg-white rounded-[32px] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+        <div className="bg-white dark:bg-white/[0.03] backdrop-blur-2xl rounded-[32px] shadow-sm dark:shadow-[0_0_50px_rgb(0,0,0,0.5)] border border-slate-200 dark:border-white/5 overflow-hidden transition-colors">
           <div className="overflow-x-auto min-h-[400px]">
              <table className="w-full text-left">
                <thead>
-                 <tr className="border-b border-slate-100 bg-slate-50/20">
+                 <tr className="border-b border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-white/[0.02] transition-colors">
                     {["Member", "Credential", "Role", "Status", "Created", ""].map((h, i) => (
-                      <th key={h} className={`px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ${i === 5 ? 'text-right' : ''}`}>{h}</th>
+                      <th key={h} className={`px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 ${i === 5 ? "text-right" : ""}`}>{h}</th>
                     ))}
                  </tr>
                </thead>
-               <tbody className="divide-y divide-slate-50">
+               <tbody className="divide-y divide-slate-100 dark:divide-white/5 transition-colors">
                  {loading ? (
-                   Array(5).fill(0).map((_, i) => <tr key={i}><td colSpan={6} className="px-8 py-8 animate-pulse"><div className="h-14 bg-slate-50 rounded-2xl" /></td></tr>)
+                   Array(5).fill(0).map((_, i) => (
+                     <tr key={i}>
+                       <td colSpan={6} className="px-8 py-8 animate-pulse">
+                         <div className="h-14 bg-slate-100 dark:bg-white/5 rounded-2xl" />
+                       </td>
+                     </tr>
+                   ))
                  ) : users.length > 0 ? (
                    users.map(u => (
-                     <tr key={u.id} className="group hover:bg-slate-50/80 transition-all">
-                        <td className="px-8 py-5">
+                     <tr key={u.id} className="group hover:bg-slate-50 dark:hover:bg-white/[0.05] transition-all duration-300">
+                        <td className="px-8 py-6">
                            <div className="flex items-center gap-4">
-                              <Avatar className="h-12 w-12 rounded-[20px] ring-2 ring-white shadow-xl shadow-slate-200"><AvatarFallback className="bg-slate-900 text-white font-black text-xs uppercase">{u.name.substring(0, 2)}</AvatarFallback></Avatar>
-                              <div><p className="font-bold text-slate-900 leading-tight">{u.name}</p><p className="text-[11px] font-bold text-slate-300 tracking-wider">#{u.id.slice(-6)}</p></div>
+                              <Avatar className="h-12 w-12 rounded-[18px] ring-2 ring-slate-100 dark:ring-white/10 shadow-sm dark:shadow-xl">
+                                <AvatarFallback className="bg-gradient-to-tr from-indigo-500 to-purple-600 text-white font-black text-xs uppercase">
+                                  {u.name.substring(0, 2)}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <p className="font-bold text-slate-900 dark:text-slate-200 leading-tight">{u.name}</p>
+                                <p className="text-[11px] font-mono font-medium text-slate-500 dark:text-slate-500">#{u.id.slice(-6)}</p>
+                              </div>
                            </div>
                         </td>
-                        <td className="px-8 py-5 text-sm font-bold text-slate-600">{u.email}</td>
-                        <td className="px-8 py-5"><Badge variant="outline" className={`rounded-xl px-3 py-1 text-[10px] font-black uppercase tracking-widest border-none text-white ${u.role === 'ADMIN' ? 'bg-rose-500' : u.role === 'MODERATOR' ? 'bg-sky-500' : u.role === 'EMPLOYEE' ? 'bg-indigo-500' : 'bg-slate-500'}`}>{u.role}</Badge></td>
-                        <td className="px-8 py-5"><Badge variant="outline" className={`rounded-full px-3 py-1 text-[11px] font-black border-none shadow-sm ${getStatusColor(u.status)}`}>{u.status === 'active' ? '● ONLINE' : '● IDLE'}</Badge></td>
-                        <td className="px-8 py-5 text-sm font-bold text-slate-400 font-mono italic">{u.joinDate}</td>
-                        <td className="px-8 py-5 text-right flex justify-end gap-1 opacity-10 md:opacity-0 group-hover:opacity-100 transition-all duration-300">
-                           <Button onClick={() => { setEditingUser(u.id); setFormData({ name: u.name, email: u.email, password: "", phone: u.phone, address: u.address, role: u.role, status: u.status }); setIsSheetOpen(true); }} variant="ghost" size="icon" className="h-10 w-10 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-xl shadow-lg border-transparent hover:border-slate-100 transition-all"><PencilLine className="h-5 w-5" /></Button>
-                           <Button onClick={() => { setDeletingUser(u); setIsDelModalOpen(true); }} variant="ghost" size="icon" className="h-10 w-10 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"><Trash2 className="h-5 w-5" /></Button>
+                        <td className="px-8 py-6 text-sm font-medium text-slate-600 dark:text-slate-300">{u.email}</td>
+                        <td className="px-8 py-6">
+                          <Badge variant="outline" className={cn("rounded-lg px-2.5 py-1 text-[10px] font-black uppercase tracking-widest border", getRoleBadgeClass(u.role))}>
+                            {u.role}
+                          </Badge>
+                        </td>
+                        <td className="px-8 py-6">
+                          <Badge variant="outline" className={cn("rounded-[10px] px-3 py-1 text-[10px] font-black tracking-widest border", getStatusBadgeClass(u.status))}>
+                            {u.status === "active" ? "● ONLINE" : "● LOCKED"}
+                          </Badge>
+                        </td>
+                        <td className="px-8 py-6 text-sm font-bold text-slate-500 dark:text-slate-400 font-mono">{u.joinDate}</td>
+                        <td className="px-8 py-6 text-right flex justify-end gap-2 opacity-30 md:opacity-100 group-hover:opacity-100 transition-all duration-300">
+                           <Button onClick={() => { setEditingUser(u.id); setFormData({ name: u.name, email: u.email, password: "", phone: u.phone, address: u.address, role: u.role, status: u.status }); setIsSheetOpen(true); }} variant="ghost" size="icon" className="h-10 w-10 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-slate-100 dark:bg-black/20 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded-xl border border-transparent hover:border-indigo-200 dark:hover:border-indigo-500/20 transition-all"><PencilLine className="h-[18px] w-[18px]" /></Button>
+                           <Button onClick={() => { setDeletingUser(u); setIsDelModalOpen(true); }} variant="ghost" size="icon" className="h-10 w-10 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-100 dark:bg-black/20 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl border border-transparent hover:border-rose-200 dark:hover:border-rose-500/20 transition-all"><Trash2 className="h-[18px] w-[18px]" /></Button>
                            <DropdownMenu>
-                              <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="h-10 w-10 text-slate-400 hover:text-slate-900"><MoreVertical className="h-5 w-5" /></Button>} />
-                              <DropdownMenuContent align="end" className="w-52 p-3 rounded-2xl shadow-2xl border-slate-100 bg-white/95 backdrop-blur-md">
-                                 <DropdownMenuItem onSelect={() => handleBlockToggle(u)} className="rounded-xl font-bold text-slate-700 py-3 cursor-pointer hover:bg-slate-50 transition-colors uppercase text-[10px] tracking-widest">{u.status === 'active' ? <><Lock className="h-4 w-4 mr-3" /> Lock Signal</> : <><Unlock className="h-4 w-4 mr-3" /> Reconnect</>}</DropdownMenuItem>
+                              <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="h-10 w-10 text-slate-400 hover:text-slate-900 dark:hover:text-white"><MoreVertical className="h-[18px] w-[18px]" /></Button>} />
+                              <DropdownMenuContent align="end" className="w-52 p-3 rounded-2xl shadow-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#0A0A0B] backdrop-blur-md">
+                                 <DropdownMenuItem onSelect={() => handleBlockToggle(u)} className="rounded-xl font-bold text-slate-700 dark:text-slate-200 py-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-white/10 transition-colors uppercase text-[10px] tracking-widest">{u.status === 'active' ? <><Lock className="h-4 w-4 mr-3" /> Lock Signal</> : <><Unlock className="h-4 w-4 mr-3" /> Reconnect</>}</DropdownMenuItem>
                               </DropdownMenuContent>
                            </DropdownMenu>
                         </td>
                      </tr>
                    ))
-                 ) : (<tr><td colSpan={6} className="py-24 text-center text-slate-300 font-black italic tracking-widest">NO DATA DETECTED</td></tr>)}
+                 ) : (
+                   <tr>
+                     <td colSpan={6} className="py-24 text-center text-slate-500 dark:text-slate-400 font-black italic tracking-widest uppercase">
+                       No records tracked
+                     </td>
+                   </tr>
+                 )}
                </tbody>
              </table>
           </div>
-          <div className="p-8 bg-slate-50/30 border-t border-slate-50 flex items-center justify-between">
-             <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Module Page <span className="text-indigo-600">{currentPage}</span> of {totalPages}</div>
+          <div className="px-8 py-6 bg-slate-50/50 dark:bg-white/[0.01] border-t border-slate-100 dark:border-white/5 flex items-center justify-between transition-colors">
+             <div className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.3em]">
+               Data volume <span className="text-indigo-600 dark:text-indigo-400">{currentPage}</span> / {totalPages}
+             </div>
              <div className="flex gap-3">
-                <Button variant="outline" className="h-11 w-11 p-0 rounded-2xl bg-white shadow-sm hover:translate-x-[-2px] transition-transform" disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}><ChevronLeft className="h-5 w-5" /></Button>
-                <Button variant="outline" className="h-11 w-11 p-0 rounded-2xl bg-white shadow-sm hover:translate-x-[2px] transition-transform" disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)}><ChevronRight className="h-5 w-5" /></Button>
+                <Button variant="outline" className="h-10 w-10 p-0 rounded-xl bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/10 hover:translate-x-[-2px] transition-all" disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}><ChevronLeft className="h-5 w-5" /></Button>
+                <Button variant="outline" className="h-10 w-10 p-0 rounded-xl bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/10 hover:translate-x-[2px] transition-all" disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)}><ChevronRight className="h-5 w-5" /></Button>
              </div>
           </div>
         </div>
 
-        {/* REUSABLE FORM SHEET */}
-        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-          <SheetContent className="sm:max-w-[500px] p-0 border-l-0 shadow-2xl overflow-hidden focus:ring-0">
-             <div className="h-full flex flex-col bg-slate-50">
-                <div className="p-10 bg-indigo-600 text-white relative">
-                   <div className="absolute top-0 right-0 h-40 w-40 bg-white/10 rounded-full blur-3xl -mt-10 -mr-10" />
-                   <SheetHeader className="text-left relative z-10">
-                      <SheetTitle className="text-3xl font-black text-white">{editingUser ? 'EDIT ACCESS' : 'NEW ACCESS'}</SheetTitle>
-                      <SheetDescription className="text-indigo-100 font-bold opacity-80 uppercase tracking-[0.2em] text-[10px]">Administrative Privilege Manager</SheetDescription>
-                   </SheetHeader>
-                </div>
-                <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-10 space-y-12">
-                   <div className="space-y-4">
-                      <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500">ACCOUNT CORE DATA</Label>
-                      <div className="grid gap-5 bg-white p-6 rounded-[28px] shadow-sm border border-slate-100">
-                         <div className="space-y-2"><Label className="text-slate-400 font-bold ml-1">Identity Name</Label><Input required className="h-12 bg-slate-50 border-none rounded-xl font-bold" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} /></div>
-                         <div className="space-y-2"><Label className="text-slate-400 font-bold ml-1">Email Endpoint</Label><Input type="email" required disabled={!!editingUser} className="h-12 bg-slate-50 border-none rounded-xl font-bold disabled:opacity-50" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} /></div>
-                         {!editingUser && <div className="space-y-2"><Label className="text-slate-400 font-bold ml-1">Master Password</Label><Input type="password" required className="h-12 bg-slate-50 border-none rounded-xl font-bold" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} /></div>}
-                      </div>
-                   </div>
-                   <div className="space-y-6">
-                      <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500">ASSIGN PRIVILEGE</Label>
-                      <div className="grid grid-cols-2 gap-3">
-                        {ROLES.map(({id, label, desc, icon: Icon, color}) => (
-                           <button key={id} type="button" onClick={() => setFormData({...formData, role: id})} 
-                             className={cn("p-5 rounded-[28px] border-2 text-left transition-all active:scale-95 group relative", formData.role === id ? `border-${color}-500 bg-${color}-50/30 ring-4 ring-${color}-500/10 shadow-lg shadow-${color}-500/5` : "border-transparent bg-white shadow-sm hover:border-slate-100")}>
-                             <div className={cn("inline-flex p-3 rounded-[18px] mb-4 transition-all", formData.role === id ? `bg-${color}-500 text-white shadow-lg` : "bg-slate-50 text-slate-300 group-hover:text-slate-500")}><Icon className="h-5 w-5" /></div>
-                             <p className={cn("text-[11px] font-black uppercase tracking-widest", formData.role === id ? `text-${color}-600` : "text-slate-400")}>{label}</p>
-                             <p className="text-[10px] font-bold text-slate-300 line-clamp-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">{desc}</p>
-                             {formData.role === id && <div className={`absolute top-4 right-4 h-2 w-2 rounded-full bg-${color}-500 animate-pulse`} />}
-                           </button>
-                        ))}
-                      </div>
-                   </div>
-                   <div className="space-y-4">
-                      <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500">EXTENDED METADATA</Label>
-                      <div className="grid gap-5 bg-white p-6 rounded-[28px] shadow-sm border border-slate-100">
-                         <div className="flex gap-4">
-                            <div className="flex-1 space-y-2"><Label className="text-slate-400 font-bold ml-1">Phone</Label><Input className="h-12 bg-slate-50 border-none rounded-xl font-bold" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} /></div>
-                            <div className="w-1/3 space-y-2"><Label className="text-slate-400 font-bold ml-1">Status</Label><select className="w-full h-12 px-3 bg-slate-50 border-none rounded-xl text-xs font-black text-indigo-600 outline-none" value={formData.status} onChange={e => setFormData({...formData, status: e.target.value as any})}><option value="active">ACTIVE</option><option value="blocked">LOCKED</option></select></div>
-                         </div>
-                         <div className="space-y-2"><Label className="text-slate-400 font-bold ml-1">Working Address</Label><Input className="h-12 bg-slate-50 border-none rounded-xl font-bold" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} /></div>
-                      </div>
-                   </div>
-                </form>
-                <div className="p-10 bg-white border-t border-slate-50">
-                  <Button onClick={handleSubmit as any} className="w-full h-14 bg-slate-900 hover:bg-black text-white rounded-2xl font-black text-lg shadow-2xl transition-all flex items-center justify-center gap-3 disabled:opacity-50" disabled={isSubmitting}>{isSubmitting ? <Loader2 className="animate-spin" /> : <><CheckCircle2 className="h-6 w-6" /> COMMENCE UPDATE</>}</Button>
-                </div>
-             </div>
-          </SheetContent>
-        </Sheet>
+        {/* Form modal — palette đồng bộ workspace (#0A0A0B + indigo/violet) */}
+        {isSheetOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#070709]/85 backdrop-blur-md animate-in fade-in duration-300">
+            <div className="bg-[#0A0A0B] rounded-[32px] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.65)] w-full max-w-[420px] flex flex-col max-h-[90vh] animate-in zoom-in-[0.98] duration-300 relative border border-white/10">
+              <button type="button" onClick={() => setIsSheetOpen(false)} className="absolute top-4 right-4 z-20 rounded-xl p-2 text-slate-400 hover:bg-white/10 hover:text-white transition-colors">
+                <X size={20} strokeWidth={2.5} />
+              </button>
 
-        {/* DELETE CONFIRMATION MODAL */}
+              <div className="relative shrink-0 border-b border-white/10 bg-[#0f0f12] px-8 pt-10 pb-8 text-center overflow-hidden">
+                <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500" />
+                <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.07] mix-blend-overlay pointer-events-none" />
+                <h2 className="text-2xl font-black text-white tracking-tight leading-none mb-2 uppercase relative z-10">
+                  {editingUser ? "EDIT ACCESS" : "NEW ACCESS"}
+                </h2>
+                <p className="text-indigo-400/90 font-bold uppercase tracking-[0.2em] text-[9px] relative z-10">
+                  Administrative Privilege Manager
+                </p>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-10 custom-scrollbar relative text-slate-200">
+                 <div className="space-y-4">
+                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400 ml-2">ACCOUNT CORE DATA</Label>
+                    <div className="space-y-5 bg-white/[0.04] p-6 rounded-[28px] border border-white/10">
+                       <div className="space-y-1.5">
+                         <Label className="text-slate-400 font-bold ml-1 text-[11px]">Identity Name</Label>
+                         <Input required className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-500 rounded-[14px] font-bold focus-visible:ring-2 focus-visible:ring-indigo-500/40 focus-visible:border-indigo-500/50" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+                       </div>
+                       <div className="space-y-1.5">
+                         <Label className="text-slate-400 font-bold ml-1 text-[11px]">Email Endpoint</Label>
+                         <Input type="email" required disabled={!!editingUser} className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-500 rounded-[14px] font-bold focus-visible:ring-2 focus-visible:ring-indigo-500/40 focus-visible:border-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
+                       </div>
+                       {!editingUser && (
+                       <div className="space-y-1.5">
+                         <Label className="text-slate-400 font-bold ml-1 text-[11px]">Master Password</Label>
+                         <Input type="password" required className="h-12 bg-white/5 border-white/10 text-white rounded-[14px] font-bold tracking-[0.15em] focus-visible:ring-2 focus-visible:ring-indigo-500/40 focus-visible:border-indigo-500/50" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
+                       </div>
+                       )}
+                    </div>
+                 </div>
+
+                 <div className="space-y-4">
+                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400 ml-2">ASSIGN PRIVILEGE</Label>
+                    <div className="grid grid-cols-2 gap-4">
+                      {ROLES.map(({id, label, icon: Icon}) => {
+                         const isSelected = formData.role === id;
+                         return (
+                           <button key={id} type="button" onClick={() => setFormData({...formData, role: id})}
+                             className={cn(
+                               "p-6 rounded-[28px] border-2 flex flex-col items-center justify-center gap-4 transition-all active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50",
+                               isSelected
+                                 ? "border-indigo-500/70 bg-indigo-500/15 shadow-[0_0_24px_rgba(99,102,241,0.2)]"
+                                 : "border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.06]"
+                             )}>
+                             <div className={cn(
+                               "inline-flex p-3 rounded-full transition-all",
+                               isSelected ? "bg-indigo-500/25 text-indigo-300" : "bg-white/5 text-slate-500 group-hover:text-slate-400"
+                             )}>
+                               <Icon className="h-6 w-6" strokeWidth={isSelected ? 2.5 : 2} />
+                             </div>
+                             <p className={cn(
+                               "text-[12px] font-black uppercase tracking-widest",
+                               isSelected ? "text-indigo-200" : "text-slate-500"
+                             )}>
+                               {label}
+                             </p>
+                           </button>
+                         );
+                      })}
+                    </div>
+                 </div>
+
+                 <div className="space-y-4">
+                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400 ml-2">EXTENDED METADATA</Label>
+                    <div className="space-y-5 bg-white/[0.04] p-6 rounded-[28px] border border-white/10">
+                       <div className="flex gap-4">
+                          <div className="flex-1 space-y-1.5">
+                            <Label className="text-slate-400 font-bold ml-1 text-[11px]">Phone</Label>
+                            <Input className="h-12 bg-white/5 border-white/10 text-white rounded-[14px] font-bold focus-visible:ring-2 focus-visible:ring-indigo-500/40 focus-visible:border-indigo-500/50" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
+                          </div>
+                          <div className="w-1/3 space-y-1.5">
+                            <Label className="text-slate-400 font-bold ml-1 text-[11px]">Status</Label>
+                            <select className="w-full h-12 px-3 bg-white/5 border border-white/10 rounded-[14px] text-[10px] uppercase font-black text-indigo-300 outline-none cursor-pointer focus-visible:ring-2 focus-visible:ring-indigo-500/40" value={formData.status} onChange={e => setFormData({...formData, status: e.target.value as "active" | "blocked"})}>
+                              <option value="active" className="bg-[#0A0A0B] text-white">ACTIVE</option>
+                              <option value="blocked" className="bg-[#0A0A0B] text-white">LOCKED</option>
+                            </select>
+                          </div>
+                       </div>
+                       <div className="space-y-1.5">
+                          <Label className="text-slate-400 font-bold ml-1 text-[11px]">Working Address</Label>
+                          <Input className="h-12 bg-white/5 border-white/10 text-white rounded-[14px] font-bold focus-visible:ring-2 focus-visible:ring-indigo-500/40 focus-visible:border-indigo-500/50" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} />
+                       </div>
+                    </div>
+                 </div>
+              </div>
+
+              <div className="p-6 md:px-8 md:pb-8 shrink-0 border-t border-white/10 bg-[#080809]">
+                 <Button type="button" onClick={(e) => { e.preventDefault(); void handleSubmit(e as unknown as React.FormEvent); }} disabled={isSubmitting} className="w-full h-14 rounded-[20px] font-black text-sm uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white border border-white/10 shadow-lg shadow-indigo-950/50 transition-all flex items-center justify-center gap-3 hover:scale-[1.01] active:scale-[0.99]">
+                   {isSubmitting ? <Loader2 className="animate-spin h-5 w-5" /> : <><CheckCircle2 className="h-5 w-5" /> COMMENCE UPDATE</>}
+                 </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {isDelModalOpen && (
-           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in transition-all">
-              <div className="bg-white rounded-[40px] shadow-2xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200">
+           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#070709]/85 backdrop-blur-md animate-in fade-in transition-all">
+              <div className="bg-[#0A0A0B] border border-white/10 rounded-[32px] shadow-[0_0_60px_rgba(0,0,0,0.65)] w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200">
+                 <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-rose-500/80 via-rose-400/50 to-rose-500/80" />
                  <div className="p-10 text-center space-y-6">
-                    <div className="mx-auto w-20 h-20 bg-rose-50 text-rose-500 rounded-3xl flex items-center justify-center shadow-inner">
-                       <AlertTriangle className="h-10 w-10 animate-bounce" />
+                    <div className="mx-auto w-20 h-20 bg-rose-500/10 text-rose-400 border border-rose-500/25 rounded-3xl flex items-center justify-center">
+                       <AlertTriangle className="h-10 w-10" />
                     </div>
                     <div className="space-y-2">
-                       <h2 className="text-2xl font-black text-slate-900 leading-tight">Xóa vĩnh viễn?</h2>
-                       <p className="text-sm font-bold text-slate-400 px-4 leading-relaxed">Bạn đang chuẩn bị xóa định danh <span className="text-rose-500 font-black">{deletingUser?.name}</span>. Hành động này không thể hoàn tác.</p>
+                       <h2 className="text-2xl font-black text-white leading-tight">Xóa vĩnh viễn?</h2>
+                       <p className="text-sm font-bold text-slate-400 px-4 leading-relaxed">Bạn đang chuẩn bị xóa định danh <span className="text-rose-400 font-black">{deletingUser?.name}</span>. Hành động này không thể hoàn tác.</p>
                     </div>
                     <div className="flex flex-col gap-3 pt-2">
-                       <Button onClick={handleApplyDelete} className="h-14 bg-rose-500 hover:bg-rose-600 text-white rounded-2xl font-black shadow-xl shadow-rose-200" disabled={isSubmitting}>
-                          {isSubmitting ? <Loader2 className="animate-spin" /> : 'XÁC NHẬN XÓA BỎ'}
+                       <Button onClick={handleApplyDelete} className="h-14 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white rounded-2xl font-black border border-rose-400/20 shadow-lg shadow-rose-950/40" disabled={isSubmitting}>
+                          {isSubmitting ? <Loader2 className="animate-spin" /> : "XÁC NHẬN XÓA BỎ"}
                        </Button>
-                       <Button onClick={() => setIsDelModalOpen(false)} variant="ghost" className="h-12 text-slate-400 font-black hover:bg-slate-50 rounded-2xl">
+                       <Button onClick={() => setIsDelModalOpen(false)} variant="ghost" className="h-12 text-slate-400 font-black hover:bg-white/5 hover:text-white rounded-2xl">
                           QUAY LẠI
                        </Button>
                     </div>

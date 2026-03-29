@@ -127,6 +127,28 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.CustomerScalarFieldEnum = {
+  id: 'id',
+  customer_id: 'customer_id',
+  full_name: 'full_name',
+  email: 'email',
+  password: 'password',
+  phone_number: 'phone_number',
+  avatar: 'avatar',
+  gender: 'gender',
+  date_of_birth: 'date_of_birth',
+  address: 'address',
+  city: 'city',
+  status: 'status',
+  tier: 'tier',
+  points: 'points',
+  isVerified: 'isVerified',
+  lastLogin: 'lastLogin',
+  adminNote: 'adminNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -143,8 +165,30 @@ exports.Role = exports.$Enums.Role = {
   EMPLOYEE: 'EMPLOYEE'
 };
 
+exports.Gender = exports.$Enums.Gender = {
+  MALE: 'MALE',
+  FEMALE: 'FEMALE',
+  OTHER: 'OTHER',
+  HIDDEN: 'HIDDEN'
+};
+
+exports.CustomerStatus = exports.$Enums.CustomerStatus = {
+  ACTIVE: 'ACTIVE',
+  BLOCKED: 'BLOCKED',
+  PENDING: 'PENDING',
+  INACTIVE: 'INACTIVE'
+};
+
+exports.CustomerTier = exports.$Enums.CustomerTier = {
+  BRONZE: 'BRONZE',
+  SILVER: 'SILVER',
+  GOLD: 'GOLD',
+  DIAMOND: 'DIAMOND'
+};
+
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  Customer: 'Customer'
 };
 
 /**

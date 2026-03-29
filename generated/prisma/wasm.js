@@ -99,6 +99,28 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.CustomerScalarFieldEnum = {
+  id: 'id',
+  customer_id: 'customer_id',
+  full_name: 'full_name',
+  email: 'email',
+  password: 'password',
+  phone_number: 'phone_number',
+  avatar: 'avatar',
+  gender: 'gender',
+  date_of_birth: 'date_of_birth',
+  address: 'address',
+  city: 'city',
+  status: 'status',
+  tier: 'tier',
+  points: 'points',
+  isVerified: 'isVerified',
+  lastLogin: 'lastLogin',
+  adminNote: 'adminNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -115,8 +137,30 @@ exports.Role = exports.$Enums.Role = {
   EMPLOYEE: 'EMPLOYEE'
 };
 
+exports.Gender = exports.$Enums.Gender = {
+  MALE: 'MALE',
+  FEMALE: 'FEMALE',
+  OTHER: 'OTHER',
+  HIDDEN: 'HIDDEN'
+};
+
+exports.CustomerStatus = exports.$Enums.CustomerStatus = {
+  ACTIVE: 'ACTIVE',
+  BLOCKED: 'BLOCKED',
+  PENDING: 'PENDING',
+  INACTIVE: 'INACTIVE'
+};
+
+exports.CustomerTier = exports.$Enums.CustomerTier = {
+  BRONZE: 'BRONZE',
+  SILVER: 'SILVER',
+  GOLD: 'GOLD',
+  DIAMOND: 'DIAMOND'
+};
+
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  Customer: 'Customer'
 };
 /**
  * Create the Client
@@ -129,7 +173,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/flashtm/Documents/FlashTechNextjs/my-app/generated/prisma",
+      "value": "C:\\Users\\minhz\\Documents\\FlashTechnextjs\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -138,19 +182,27 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "debian-openssl-3.0.x",
+        "value": "windows",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "windows"
+      },
+      {
+        "fromEnvVar": null,
+        "value": "debian-openssl-3.0.x"
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/flashtm/Documents/FlashTechNextjs/prisma/schema.prisma",
+    "sourceFilePath": "C:\\Users\\minhz\\Documents\\FlashTechnextjs\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
     "rootEnvPath": null,
-    "schemaEnvPath": "../../../.env"
+    "schemaEnvPath": "../../.env"
   },
-  "relativePath": "../../../prisma",
+  "relativePath": "../../prisma",
   "clientVersion": "6.19.2",
   "engineVersion": "c2990dca591cba766e3b7ef5d9e8a84796e47ab7",
   "datasourceNames": [
@@ -166,13 +218,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Get a free hosted Postgres database in seconds: `npx create-db`\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../my-app/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"mongodb\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum Role {\n  USER\n  ADMIN\n  MODERATOR\n  EMPLOYEE\n}\n\nmodel User {\n  id           String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  name         String\n  email        String   @unique\n  password     String\n  phone_number String   @unique\n  address      String\n  role         Role     @default(USER)\n  isBlocked    Boolean  @default(false)\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n}\n",
-  "inlineSchemaHash": "b0fcf308ce3f292d95830e23d3e122b1f82b70a0430cd8bf8d0511a9a639cad9",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Get a free hosted Postgres database in seconds: `npx create-db`\n\ngenerator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../generated/prisma\"\n  binaryTargets = [\"native\", \"windows\", \"debian-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"mongodb\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum Role {\n  USER\n  ADMIN\n  MODERATOR\n  EMPLOYEE\n}\n\nmodel User {\n  id           String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  name         String\n  email        String   @unique\n  password     String\n  phone_number String   @unique\n  address      String\n  role         Role     @default(USER)\n  isBlocked    Boolean  @default(false)\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n}\n\n// Định nghĩa các tập giá trị (Enums)\nenum Gender {\n  MALE\n  FEMALE\n  OTHER\n  HIDDEN\n}\n\nenum CustomerStatus {\n  ACTIVE // Đang hoạt động bình thường\n  BLOCKED // Đang bị khóa (thay cho isBlocked)\n  PENDING // Chờ xác thực (email/sđt)\n  INACTIVE // Ngừng hoạt động (khách tự đóng tài khoản)\n}\n\nenum CustomerTier {\n  BRONZE // Đồng (Mặc định)\n  SILVER // Bạc\n  GOLD // Vàng\n  DIAMOND // Kim cương\n}\n\nmodel Customer {\n  id String @id @default(auto()) @map(\"_id\") @db.ObjectId\n\n  // Định danh khách hàng (Ví dụ: KH-2024-001)\n  customer_id String @unique\n\n  // Thông tin cơ bản\n  full_name    String\n  email        String  @unique\n  password     String // Lưu hash bằng bcrypt\n  phone_number String? @unique\n  avatar       String? @default(\"https://github.com/shadcn.png\")\n\n  // Thông tin cá nhân & Địa chỉ\n  gender        Gender    @default(MALE)\n  date_of_birth DateTime?\n  address       String?\n  city          String? // Thêm tỉnh/thành để dễ lọc khách hàng\n\n  // Phân loại & Trạng thái\n  status CustomerStatus @default(ACTIVE)\n  tier   CustomerTier   @default(BRONZE) // Phân hạng khách hàng để ưu đãi\n  points Int            @default(0) // Điểm tích lũy mua hàng\n\n  // Bảo mật & Hệ thống\n  isVerified Boolean   @default(false) // Đã xác thực email chưa\n  lastLogin  DateTime?\n  adminNote  String? // Ghi chú của Admin về khách này (ví dụ: khách hay boom hàng)\n\n  // Thời gian\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@map(\"customer\")\n}\n",
+  "inlineSchemaHash": "086df14d275f23dd53c255bbfa2941191cbb6dcff101b36ed985cd62f1631091",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone_number\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"address\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"isBlocked\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone_number\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"address\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"isBlocked\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Customer\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"customer_id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"full_name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone_number\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"avatar\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"gender\",\"kind\":\"enum\",\"type\":\"Gender\"},{\"name\":\"date_of_birth\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"address\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"CustomerStatus\"},{\"name\":\"tier\",\"kind\":\"enum\",\"type\":\"CustomerTier\"},{\"name\":\"points\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"isVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"lastLogin\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"adminNote\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"customer\"}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),
