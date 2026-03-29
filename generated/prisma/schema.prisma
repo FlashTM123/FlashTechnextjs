@@ -28,6 +28,7 @@ model User {
   password     String
   phone_number String   @unique
   address      String
+  avatar       String   @default("https://github.com/shadcn.png")
   role         Role     @default(USER)
   isBlocked    Boolean  @default(false)
   createdAt    DateTime @default(now())

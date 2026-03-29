@@ -980,6 +980,7 @@ export namespace Prisma {
     password: string | null
     phone_number: string | null
     address: string | null
+    avatar: string | null
     role: $Enums.Role | null
     isBlocked: boolean | null
     createdAt: Date | null
@@ -993,6 +994,7 @@ export namespace Prisma {
     password: string | null
     phone_number: string | null
     address: string | null
+    avatar: string | null
     role: $Enums.Role | null
     isBlocked: boolean | null
     createdAt: Date | null
@@ -1006,6 +1008,7 @@ export namespace Prisma {
     password: number
     phone_number: number
     address: number
+    avatar: number
     role: number
     isBlocked: number
     createdAt: number
@@ -1021,6 +1024,7 @@ export namespace Prisma {
     password?: true
     phone_number?: true
     address?: true
+    avatar?: true
     role?: true
     isBlocked?: true
     createdAt?: true
@@ -1034,6 +1038,7 @@ export namespace Prisma {
     password?: true
     phone_number?: true
     address?: true
+    avatar?: true
     role?: true
     isBlocked?: true
     createdAt?: true
@@ -1047,6 +1052,7 @@ export namespace Prisma {
     password?: true
     phone_number?: true
     address?: true
+    avatar?: true
     role?: true
     isBlocked?: true
     createdAt?: true
@@ -1133,6 +1139,7 @@ export namespace Prisma {
     password: string
     phone_number: string
     address: string
+    avatar: string
     role: $Enums.Role
     isBlocked: boolean
     createdAt: Date
@@ -1163,6 +1170,7 @@ export namespace Prisma {
     password?: boolean
     phone_number?: boolean
     address?: boolean
+    avatar?: boolean
     role?: boolean
     isBlocked?: boolean
     createdAt?: boolean
@@ -1178,13 +1186,14 @@ export namespace Prisma {
     password?: boolean
     phone_number?: boolean
     address?: boolean
+    avatar?: boolean
     role?: boolean
     isBlocked?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "password" | "phone_number" | "address" | "role" | "isBlocked" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "password" | "phone_number" | "address" | "avatar" | "role" | "isBlocked" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
@@ -1196,6 +1205,7 @@ export namespace Prisma {
       password: string
       phone_number: string
       address: string
+      avatar: string
       role: $Enums.Role
       isBlocked: boolean
       createdAt: Date
@@ -1598,6 +1608,7 @@ export namespace Prisma {
     readonly password: FieldRef<"User", 'String'>
     readonly phone_number: FieldRef<"User", 'String'>
     readonly address: FieldRef<"User", 'String'>
+    readonly avatar: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'Role'>
     readonly isBlocked: FieldRef<"User", 'Boolean'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
@@ -3081,6 +3092,7 @@ export namespace Prisma {
     password: 'password',
     phone_number: 'phone_number',
     address: 'address',
+    avatar: 'avatar',
     role: 'role',
     isBlocked: 'isBlocked',
     createdAt: 'createdAt',
@@ -3268,6 +3280,7 @@ export namespace Prisma {
     password?: StringFilter<"User"> | string
     phone_number?: StringFilter<"User"> | string
     address?: StringFilter<"User"> | string
+    avatar?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
     isBlocked?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
@@ -3281,6 +3294,7 @@ export namespace Prisma {
     password?: SortOrder
     phone_number?: SortOrder
     address?: SortOrder
+    avatar?: SortOrder
     role?: SortOrder
     isBlocked?: SortOrder
     createdAt?: SortOrder
@@ -3297,6 +3311,7 @@ export namespace Prisma {
     name?: StringFilter<"User"> | string
     password?: StringFilter<"User"> | string
     address?: StringFilter<"User"> | string
+    avatar?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
     isBlocked?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
@@ -3310,6 +3325,7 @@ export namespace Prisma {
     password?: SortOrder
     phone_number?: SortOrder
     address?: SortOrder
+    avatar?: SortOrder
     role?: SortOrder
     isBlocked?: SortOrder
     createdAt?: SortOrder
@@ -3329,6 +3345,7 @@ export namespace Prisma {
     password?: StringWithAggregatesFilter<"User"> | string
     phone_number?: StringWithAggregatesFilter<"User"> | string
     address?: StringWithAggregatesFilter<"User"> | string
+    avatar?: StringWithAggregatesFilter<"User"> | string
     role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
     isBlocked?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -3466,6 +3483,7 @@ export namespace Prisma {
     password: string
     phone_number: string
     address: string
+    avatar?: string
     role?: $Enums.Role
     isBlocked?: boolean
     createdAt?: Date | string
@@ -3479,6 +3497,7 @@ export namespace Prisma {
     password: string
     phone_number: string
     address: string
+    avatar?: string
     role?: $Enums.Role
     isBlocked?: boolean
     createdAt?: Date | string
@@ -3491,6 +3510,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     phone_number?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
+    avatar?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isBlocked?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -3503,6 +3523,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     phone_number?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
+    avatar?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isBlocked?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -3516,6 +3537,7 @@ export namespace Prisma {
     password: string
     phone_number: string
     address: string
+    avatar?: string
     role?: $Enums.Role
     isBlocked?: boolean
     createdAt?: Date | string
@@ -3528,6 +3550,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     phone_number?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
+    avatar?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isBlocked?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -3540,6 +3563,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     phone_number?: StringFieldUpdateOperationsInput | string
     address?: StringFieldUpdateOperationsInput | string
+    avatar?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isBlocked?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -3741,6 +3765,7 @@ export namespace Prisma {
     password?: SortOrder
     phone_number?: SortOrder
     address?: SortOrder
+    avatar?: SortOrder
     role?: SortOrder
     isBlocked?: SortOrder
     createdAt?: SortOrder
@@ -3754,6 +3779,7 @@ export namespace Prisma {
     password?: SortOrder
     phone_number?: SortOrder
     address?: SortOrder
+    avatar?: SortOrder
     role?: SortOrder
     isBlocked?: SortOrder
     createdAt?: SortOrder
@@ -3767,6 +3793,7 @@ export namespace Prisma {
     password?: SortOrder
     phone_number?: SortOrder
     address?: SortOrder
+    avatar?: SortOrder
     role?: SortOrder
     isBlocked?: SortOrder
     createdAt?: SortOrder
