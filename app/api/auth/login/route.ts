@@ -36,6 +36,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // 4.5. Kiểm tra quyền truy cập (Chỉ cho phép Admin, Moderator, Employee)
+    if (user.role === "USER") {
+      return NextResponse.json(
+        { message: "Truy cập bị từ chối: Bạn không có quyền truy cập vào hệ thống Admin." },
+        { status: 403 }
+      );
+    }
+
     // 5. Chuẩn bị dữ liệu trả về (Loại bỏ mật khẩu để an toàn)
     const { password: _, ...userWithoutPassword } = user;
 

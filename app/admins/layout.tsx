@@ -77,6 +77,11 @@ function NavSidebar() {
       {/* Navigation */}
       <nav className="flex-1 space-y-2 overflow-y-auto px-4 py-6 relative z-10 custom-scrollbar">
         {menuItems.map((item) => {
+          // Hide "Staffs" menu for non-admins
+          if (item.name === "Staffs" && user?.role !== "ADMIN") {
+            return null;
+          }
+
           const isActive = pathname === item.href;
           const Icon = item.icon;
           return (

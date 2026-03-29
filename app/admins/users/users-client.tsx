@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/app/context/auth-context";
 import {
   Search,
   Plus,
@@ -88,11 +90,25 @@ const getStatusBadgeClass = (status: string) =>
 // Main Component
 // ────────────────────────────────────────────────
 export default function UsersClient() {
+  const router = useRouter();
+  const { user, isInitialized } = useAuth();
+
   const [users, setUsers]           = useState<UserData[]>([]);
   const [total, setTotal]           = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading]       = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
+
+  // Layout Auth Protection
+  useEffect(() => {
+    if (isInitialized && user && user.role !== "ADMIN") {
+      router.replace("/admins");
+    }
+  }, [isInitialized, user, router]);
+
+  if (!isInitialized || (user && user.role !== "ADMIN")) {
+    return null;
+  }
 
   const [searchTerm, setSearchTerm]   = useState("");
   const [roleFilter, setRoleFilter]   = useState("all");
@@ -317,12 +333,24 @@ export default function UsersClient() {
                         <td className="px-8 py-6 text-right flex justify-end gap-2 opacity-30 md:opacity-100 group-hover:opacity-100 transition-all duration-300">
                            <Button onClick={() => { setEditingUser(u.id); setFormData({ name: u.name, email: u.email, password: "", phone: u.phone, address: u.address, role: u.role, status: u.status }); setIsSheetOpen(true); }} variant="ghost" size="icon" className="h-10 w-10 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-slate-100 dark:bg-black/20 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 rounded-xl border border-transparent hover:border-indigo-200 dark:hover:border-indigo-500/20 transition-all"><PencilLine className="h-[18px] w-[18px]" /></Button>
                            <Button onClick={() => { setDeletingUser(u); setIsDelModalOpen(true); }} variant="ghost" size="icon" className="h-10 w-10 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-100 dark:bg-black/20 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl border border-transparent hover:border-rose-200 dark:hover:border-rose-500/20 transition-all"><Trash2 className="h-[18px] w-[18px]" /></Button>
-                           <DropdownMenu>
-                              <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="h-10 w-10 text-slate-400 hover:text-slate-900 dark:hover:text-white"><MoreVertical className="h-[18px] w-[18px]" /></Button>} />
-                              <DropdownMenuContent align="end" className="w-52 p-3 rounded-2xl shadow-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#0A0A0B] backdrop-blur-md">
-                                 <DropdownMenuItem onSelect={() => handleBlockToggle(u)} className="rounded-xl font-bold text-slate-700 dark:text-slate-200 py-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-white/10 transition-colors uppercase text-[10px] tracking-widest">{u.status === 'active' ? <><Lock className="h-4 w-4 mr-3" /> Lock Signal</> : <><Unlock className="h-4 w-4 mr-3" /> Reconnect</>}</DropdownMenuItem>
-                              </DropdownMenuContent>
-                           </DropdownMenu>
+                           <Button 
+                              onClick={() => handleBlockToggle(u)} 
+                              title={u.status === 'active' ? "Khóa tài khoản" : "Mở khóa tài khoản"}
+                              variant="ghost" 
+                              size="icon" 
+                              className={cn(
+                                "h-10 w-10 bg-slate-100 dark:bg-black/20 rounded-xl border border-transparent shadow-sm transition-all relative overflow-hidden group/lock",
+                                u.status === 'active' 
+                                  ? "text-amber-500/70 hover:text-amber-600 dark:hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 hover:border-amber-200 dark:hover:border-amber-500/20" 
+                                  : "text-emerald-500/70 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 hover:border-emerald-200 dark:hover:border-emerald-500/20"
+                              )}
+                           >
+                              {u.status === 'active' ? (
+                                <Lock className="h-[18px] w-[18px] group-hover/lock:scale-110 transition-transform" />
+                              ) : (
+                                <Unlock className="h-[18px] w-[18px] group-hover/lock:scale-110 transition-transform" />
+                              )}
+                           </Button>
                         </td>
                      </tr>
                    ))
