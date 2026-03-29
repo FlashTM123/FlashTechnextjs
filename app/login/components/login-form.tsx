@@ -58,7 +58,7 @@ export default function LoginForm() {
 
   return (
     <div className="w-full max-w-md perspective-1000">
-      <div className="relative overflow-hidden rounded-[32px] border border-white/20 bg-white/80 p-10 shadow-2xl backdrop-blur-2xl transition-all duration-500 hover:shadow-indigo-500/10 dark:bg-slate-900/80">
+      <div className="relative overflow-hidden rounded-[32px] border border-white dark:border-white/10 bg-white/80 p-10 shadow-2xl backdrop-blur-2xl transition-all duration-500 hover:shadow-indigo-500/10 dark:bg-slate-900/80">
         
         {/* Animated Background Glow */}
         <div className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-indigo-500/20 blur-3xl animate-pulse" />
@@ -70,21 +70,21 @@ export default function LoginForm() {
             <Zap className="h-8 w-8 fill-white" />
           </div>
           <h1 className="text-3xl font-black tracking-tighter text-slate-900 dark:text-white">FlashTech Admin</h1>
-          <p className="mt-2 text-sm font-bold text-slate-400 uppercase tracking-widest opacity-60">Terminal Authentication</p>
+          <p className="mt-2 text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest opacity-60">Terminal Authentication</p>
         </div>
 
         {/* Feedback Messages */}
         <div className="space-y-4 mb-8">
           {error && (
-            <div className="flex items-center gap-3 rounded-2xl bg-rose-50 border border-rose-100 p-4 animate-in slide-in-from-top-2">
+            <div className="flex items-center gap-3 rounded-2xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 p-4 animate-in slide-in-from-top-2">
               <AlertCircle className="h-5 w-5 text-rose-500 flex-shrink-0" />
-              <p className="text-xs font-bold text-rose-700">{error}</p>
+              <p className="text-xs font-bold text-rose-700 dark:text-rose-400">{error}</p>
             </div>
           )}
           {success && (
-            <div className="flex items-center gap-3 rounded-2xl bg-emerald-50 border border-emerald-100 p-4 animate-in slide-in-from-top-2">
+            <div className="flex items-center gap-3 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 p-4 animate-in slide-in-from-top-2">
               <CheckCircle2 className="h-5 w-5 text-emerald-500 flex-shrink-0" />
-              <p className="text-xs font-bold text-emerald-700">{success}</p>
+              <p className="text-xs font-bold text-emerald-700 dark:text-emerald-400">{success}</p>
             </div>
           )}
         </div>
@@ -92,39 +92,39 @@ export default function LoginForm() {
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="space-y-6 relative">
           <div className="space-y-2 group">
-            <Label className="ml-1 text-[10px] font-black uppercase tracking-widest text-slate-400 group-focus-within:text-indigo-600 transition-colors">Địa chỉ Email</Label>
+            <Label className="ml-1 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors">Địa chỉ Email</Label>
             <div className="relative">
-              <Mail className="absolute left-4 top-3.5 h-5 w-5 text-slate-300 group-focus-within:text-indigo-400" />
+              <Mail className="absolute left-4 top-3.5 h-5 w-5 text-slate-300 dark:text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
               <Input
                 type="email"
                 placeholder="admin@flashtech.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={loading}
-                className="h-12 w-full rounded-xl border-none bg-slate-100/50 pl-12 pr-4 font-bold text-slate-900 placeholder:text-slate-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 transition-all"
+                className="h-12 w-full rounded-xl border-none bg-slate-100/50 dark:bg-slate-800/50 pl-12 pr-4 font-bold text-slate-900 dark:text-slate-100 placeholder:text-slate-300 dark:placeholder:text-slate-600 focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-indigo-500/10 dark:focus:ring-indigo-500/20 transition-all"
               />
             </div>
           </div>
 
           <div className="space-y-2 group">
              <div className="flex justify-between items-center px-1">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-focus-within:text-indigo-600 transition-colors">Mật khẩu</Label>
-                <Link href="#" className="text-[10px] font-black text-indigo-500 hover:text-indigo-700 uppercase tracking-widest transition-colors">Quên mật khẩu?</Link>
+                <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors">Mật khẩu</Label>
+                <Link href="#" className="text-[10px] font-black text-indigo-500 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 uppercase tracking-widest transition-colors">Quên mật khẩu?</Link>
              </div>
              <div className="relative">
-              <Lock className="absolute left-4 top-3.5 h-5 w-5 text-slate-300 group-focus-within:text-indigo-400" />
+              <Lock className="absolute left-4 top-3.5 h-5 w-5 text-slate-300 dark:text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
               <Input
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
-                className="h-12 w-full rounded-xl border-none bg-slate-100/50 pl-12 pr-12 font-bold text-slate-900 placeholder:text-slate-300 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 transition-all"
+                className="h-12 w-full rounded-xl border-none bg-slate-100/50 dark:bg-slate-800/50 pl-12 pr-12 font-bold text-slate-900 dark:text-slate-100 placeholder:text-slate-300 dark:placeholder:text-slate-600 focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-indigo-500/10 dark:focus:ring-indigo-500/20 transition-all"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-3.5 text-slate-300 hover:text-indigo-500 transition-colors"
+                className="absolute right-4 top-3.5 text-slate-300 dark:text-slate-500 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors"
                 tabIndex={-1}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -133,14 +133,14 @@ export default function LoginForm() {
           </div>
 
           <div className="flex items-center gap-2 px-1">
-             <input type="checkbox" id="remember" className="h-4 w-4 rounded border-slate-200 text-indigo-600 focus:ring-indigo-500" />
-             <label htmlFor="remember" className="text-xs font-bold text-slate-400 select-none">Duy trì đăng nhập</label>
+             <input type="checkbox" id="remember" className="h-4 w-4 rounded border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-indigo-600 focus:ring-indigo-500" />
+             <label htmlFor="remember" className="text-xs font-bold text-slate-400 dark:text-slate-500 select-none">Duy trì đăng nhập</label>
           </div>
 
           <Button
             type="submit"
             disabled={loading}
-            className="group h-14 w-full rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-2xl shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-50"
+            className="group h-14 w-full rounded-2xl bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white shadow-2xl shadow-indigo-500/30 dark:shadow-indigo-500/10 transition-all active:scale-95 disabled:opacity-50"
           >
             {loading ? (
               <div className="flex items-center gap-2">
@@ -157,9 +157,9 @@ export default function LoginForm() {
         </form>
 
         {/* Support Link */}
-        <div className="mt-10 pt-6 border-t border-slate-100 text-center">
-           <p className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center justify-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-emerald-500" /> Secure Terminal Session
+        <div className="mt-10 pt-6 border-t border-slate-100 dark:border-slate-800 text-center">
+           <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center justify-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-emerald-500 dark:text-emerald-400" /> Secure Terminal Session
            </p>
         </div>
       </div>
