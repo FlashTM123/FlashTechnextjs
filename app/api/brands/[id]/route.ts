@@ -3,13 +3,16 @@ import { prisma } from "@/lib/prisma";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Manual ID extraction fallback
+    const resolvedParams = await params;
+    const { id: routeId } = resolvedParams;
+
+    // Manual ID extraction fallback if routeId is flaky
     const url = new URL(request.url);
     const manualId = url.pathname.split('/').pop();
-    const id = (params.id && params.id !== "undefined") ? params.id : manualId;
+    const id = (routeId && routeId !== "undefined") ? routeId : manualId;
     
     console.log("Extracted PATCH ID:", id);
 
@@ -51,13 +54,16 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
+    const { id: routeId } = resolvedParams;
+
     // Manual ID extraction fallback
     const url = new URL(request.url);
     const manualId = url.pathname.split('/').pop();
-    const id = (params.id && params.id !== "undefined") ? params.id : manualId;
+    const id = (routeId && routeId !== "undefined") ? routeId : manualId;
 
     console.log("Extracted DELETE ID:", id);
 
