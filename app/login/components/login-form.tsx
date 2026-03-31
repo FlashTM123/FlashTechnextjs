@@ -19,17 +19,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/app/context/auth-context";
+import { useLanguage } from "@/app/context/language-context";
 import { cn } from "@/lib/utils";
 
 export default function LoginForm() {
   const router = useRouter();
   const { login } = useAuth();
+  const { setLanguage } = useLanguage();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showLanguageSelect, setShowLanguageSelect] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,10 +48,10 @@ export default function LoginForm() {
 
     try {
       await login(email, password);
-      setSuccess("Xác thực thành công! Đang chuyển hướng...");
+      setSuccess("Xác thực thành công!");
       setTimeout(() => {
-        router.push("/admins");
-      }, 800);
+        setShowLanguageSelect(true);
+      }, 500);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Email hoặc mật khẩu không đúng";
       setError(errorMessage);
@@ -89,9 +92,45 @@ export default function LoginForm() {
           )}
         </div>
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="space-y-6 relative">
-          <div className="space-y-2 group">
+        {showLanguageSelect ? (
+          <div className="space-y-6 animate-in slide-in-from-right-4 fade-in duration-500">
+            <div className="text-center mb-6">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Chọn ngôn ngữ / Select Language</h2>
+              <p className="text-sm text-slate-500 mt-2">Vui lòng chọn ngôn ngữ giao diện của bạn.</p>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <Button
+                type="button"
+                onClick={() => {
+                  setLanguage("vi");
+                  router.push("/admins");
+                }}
+                className="h-24 flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-indigo-500 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-white transition-all"
+                variant="outline"
+              >
+                <span className="text-3xl">🇻🇳</span>
+                <span className="font-bold">Tiếng Việt</span>
+              </Button>
+              
+              <Button
+                type="button"
+                onClick={() => {
+                  setLanguage("en");
+                  router.push("/admins");
+                }}
+                className="h-24 flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-indigo-500 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-white transition-all"
+                variant="outline"
+              >
+                <span className="text-3xl">🇬🇧</span>
+                <span className="font-bold">English</span>
+              </Button>
+            </div>
+          </div>
+        ) : (
+          /* Form Body */
+          <form onSubmit={handleSubmit} className="space-y-6 relative animate-in fade-in zoom-in-95 duration-300">
+            <div className="space-y-2 group">
             <Label className="ml-1 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors">Địa chỉ Email</Label>
             <div className="relative">
               <Mail className="absolute left-4 top-3.5 h-5 w-5 text-slate-300 dark:text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
@@ -155,6 +194,7 @@ export default function LoginForm() {
             )}
           </Button>
         </form>
+        )}
 
         {/* Support Link */}
         <div className="mt-10 pt-6 border-t border-slate-100 dark:border-slate-800 text-center">

@@ -16,7 +16,8 @@ import {
   LogOut,
   User,
   ChevronDown,
-  Zap
+  Zap,
+  Globe
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -36,21 +37,24 @@ import {
 } from "@/components/ui/sheet";
 import { useAuth } from "@/app/context/auth-context";
 import { ModeToggle } from "@/components/theme-toggle";
+import { useLanguage } from "@/app/context/language-context";
 
 const menuItems = [
-  { name: "Dashboard", href: "/admins", icon: LayoutDashboard },
-  { name: "Staffs", href: "/admins/users", icon: Users },
-  { name: "Customers", href: "/admins/customers", icon: Users },
-  { name: "Products", href: "/admins/products", icon: Package },
-  { name: "Orders", href: "/admins/orders", icon: ShoppingCart },
-  { name: "Analytics", href: "/admins/analytics", icon: BarChart3 },
-  { name: "Settings", href: "/admins/settings", icon: Settings },
+  { name: "dashboard", href: "/admins", icon: LayoutDashboard },
+  { name: "staffs", href: "/admins/users", icon: Users },
+  { name: "customers", href: "/admins/customers", icon: Users },
+  { name: "brands", href: "/admins/brands", icon: Package },
+  { name: "products", href: "/admins/products", icon: Package },
+  { name: "orders", href: "/admins/orders", icon: ShoppingCart },
+  { name: "analytics", href: "/admins/analytics", icon: BarChart3 },
+  { name: "settings", href: "/admins/settings", icon: Settings },
 ];
 
 function NavSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
 
   const handleLogout = () => {
     logout();
@@ -78,7 +82,7 @@ function NavSidebar() {
       <nav className="flex-1 space-y-2 overflow-y-auto px-4 py-6 relative z-10 custom-scrollbar">
         {menuItems.map((item) => {
           // Hide "Staffs" menu for non-admins
-          if (item.name === "Staffs" && user?.role !== "ADMIN") {
+          if (item.name === "staffs" && user?.role !== "ADMIN") {
             return null;
           }
 
@@ -105,7 +109,7 @@ function NavSidebar() {
                 strokeWidth={isActive ? 2.5 : 2}
                 className={`relative z-10 transition-transform duration-300 ${isActive ? "text-indigo-600 dark:text-indigo-400" : "group-hover:scale-110 group-hover:rotate-3 group-hover:text-indigo-500 dark:group-hover:text-indigo-400"}`}
               />
-              <span className="relative z-10">{item.name}</span>
+              <span className="relative z-10">{t(item.name)}</span>
             </Link>
           );
         })}
@@ -160,6 +164,7 @@ export default function AdminLayout({
   const [mobileOpen, setMobileOpen] = useState(false);
   const router = useRouter();
   const { user, logout, isInitialized } = useAuth();
+  const { t, language, setLanguage } = useLanguage();
   const [isAuthChecked, setIsAuthChecked] = useState(false);
 
   useEffect(() => {
@@ -223,7 +228,7 @@ export default function AdminLayout({
               {/* Breadcrumb / Title */}
               <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-white/5 border border-slate-200/60 dark:border-white/10 shadow-sm transition-colors">
                 <div className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse shadow-[0_0_8px_rgba(99,102,241,0.6)]" />
-                <span className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest transition-colors">Admin Control</span>
+                <span className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest transition-colors">{t("adminControl")}</span>
               </div>
             </div>
 
@@ -232,13 +237,27 @@ export default function AdminLayout({
               <div className="hidden lg:flex relative group">
                 <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
                 <Input 
-                  placeholder="Search anything..." 
+                  placeholder={t("searchAnything")} 
                   className="h-11 w-72 pl-12 bg-white dark:bg-[#0A0A0B] border-slate-200/60 dark:border-white/10 rounded-full text-sm font-medium shadow-sm ring-offset-0 focus-visible:ring-4 focus-visible:ring-indigo-500/10 focus-visible:border-indigo-500 transition-all placeholder:text-slate-400 dark:text-white" 
                 />
               </div>
 
               <div className="h-8 w-px bg-slate-200 dark:bg-white/10 hidden sm:block mx-1 transition-colors" />
               
+              <DropdownMenu>
+                <DropdownMenuTrigger className="h-11 w-11 flex items-center justify-center rounded-full border border-slate-200/60 dark:border-white/10 bg-white dark:bg-white/5 shadow-sm hover:bg-slate-50 dark:hover:bg-white/10 hover:scale-105 active:scale-95 transition-all outline-none">
+                  <Globe size={18} className="text-slate-600 dark:text-slate-300 transition-colors" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-40 rounded-2xl bg-white dark:bg-[#0A0A0B] border-slate-200 dark:border-white/10 shadow-xl text-slate-700 dark:text-slate-300">
+                  <DropdownMenuItem onClick={() => setLanguage("en")} className={`font-bold py-2.5 px-3 cursor-pointer focus:bg-slate-50 dark:focus:bg-white/10 outline-none rounded-xl ${language === "en" ? "text-indigo-600 dark:text-indigo-400" : ""}`}>
+                    English (EN)
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setLanguage("vi")} className={`font-bold py-2.5 px-3 cursor-pointer focus:bg-slate-50 dark:focus:bg-white/10 outline-none rounded-xl mt-1 ${language === "vi" ? "text-indigo-600 dark:text-indigo-400" : ""}`}>
+                    Tiếng Việt (VI)
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
               <ModeToggle />
 
               <Button variant="ghost" size="icon" className="h-11 w-11 rounded-full border border-slate-200/60 dark:border-white/10 bg-white dark:bg-white/5 shadow-sm hover:bg-slate-50 dark:hover:bg-white/10 hover:scale-105 active:scale-95 transition-all relative">
@@ -256,12 +275,12 @@ export default function AdminLayout({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl shadow-2xl border-slate-100 dark:border-white/10 bg-white dark:bg-[#0A0A0B] transition-colors">
                   <div className="px-3 py-2 mb-2">
-                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-0.5">Signed in</p>
+                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-0.5">{t("signedIn")}</p>
                     <p className="text-xs font-semibold text-slate-900 dark:text-white truncate transition-colors">{user?.email}</p>
                   </div>
                   <DropdownMenuSeparator className="bg-slate-100 dark:bg-white/10 transition-colors" />
                   <DropdownMenuItem onClick={handleLogout} className="rounded-xl py-3 px-3 font-semibold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-700 dark:hover:text-rose-400 focus:bg-rose-50 dark:focus:bg-rose-500/10 cursor-pointer transition-colors mt-1">
-                    <LogOut size={16} className="mr-3" /> Log Out Account
+                    <LogOut size={16} className="mr-3" /> {t("logout")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

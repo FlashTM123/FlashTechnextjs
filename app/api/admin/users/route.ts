@@ -91,8 +91,8 @@ export async function POST(request: NextRequest) {
       status:   user.isBlocked ? "blocked" : "active",
       joinDate: user.createdAt.toISOString().split("T")[0],
     }, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("POST /api/admin/users error:", error);
-    return NextResponse.json({ message: "Error creating user" }, { status: 500 });
+    return NextResponse.json({ message: "Error creating user: " + error.message }, { status: 500 });
   }
 }

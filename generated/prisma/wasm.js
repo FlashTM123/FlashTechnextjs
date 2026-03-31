@@ -122,6 +122,19 @@ exports.Prisma.CustomerScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.BrandsScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  logo: 'logo',
+  description: 'description',
+  website: 'website',
+  social_links: 'social_links',
+  is_active: 'is_active',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -161,7 +174,8 @@ exports.CustomerTier = exports.$Enums.CustomerTier = {
 
 exports.Prisma.ModelName = {
   User: 'User',
-  Customer: 'Customer'
+  Customer: 'Customer',
+  Brands: 'Brands'
 };
 /**
  * Create the Client
@@ -174,7 +188,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\minhz\\Documents\\FlashTechnextjs\\generated\\prisma",
+      "value": "/home/flashtm/Documents/FlashTechnextjs/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -183,7 +197,7 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "windows",
+        "value": "debian-openssl-3.0.x",
         "native": true
       },
       {
@@ -196,11 +210,12 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\minhz\\Documents\\FlashTechnextjs\\prisma\\schema.prisma",
+    "sourceFilePath": "/home/flashtm/Documents/FlashTechnextjs/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null
+    "rootEnvPath": null,
+    "schemaEnvPath": "../../.env"
   },
   "relativePath": "../../prisma",
   "clientVersion": "6.19.2",
@@ -218,13 +233,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Get a free hosted Postgres database in seconds: `npx create-db`\n\ngenerator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../generated/prisma\"\n  binaryTargets = [\"native\", \"windows\", \"debian-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"mongodb\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum Role {\n  USER\n  ADMIN\n  MODERATOR\n  EMPLOYEE\n}\n\nmodel User {\n  id           String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  name         String\n  email        String   @unique\n  password     String\n  phone_number String   @unique\n  address      String\n  avatar       String   @default(\"https://github.com/shadcn.png\")\n  role         Role     @default(USER)\n  isBlocked    Boolean  @default(false)\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n}\n\n// Định nghĩa các tập giá trị (Enums)\nenum Gender {\n  MALE\n  FEMALE\n  OTHER\n  HIDDEN\n}\n\nenum CustomerStatus {\n  ACTIVE // Đang hoạt động bình thường\n  BLOCKED // Đang bị khóa (thay cho isBlocked)\n  PENDING // Chờ xác thực (email/sđt)\n  INACTIVE // Ngừng hoạt động (khách tự đóng tài khoản)\n}\n\nenum CustomerTier {\n  BRONZE // Đồng (Mặc định)\n  SILVER // Bạc\n  GOLD // Vàng\n  DIAMOND // Kim cương\n}\n\nmodel Customer {\n  id String @id @default(auto()) @map(\"_id\") @db.ObjectId\n\n  // Định danh khách hàng (Ví dụ: KH-2024-001)\n  customer_id String @unique\n\n  // Thông tin cơ bản\n  full_name    String\n  email        String  @unique\n  password     String // Lưu hash bằng bcrypt\n  phone_number String? @unique\n  avatar       String? @default(\"https://github.com/shadcn.png\")\n\n  // Thông tin cá nhân & Địa chỉ\n  gender        Gender    @default(MALE)\n  date_of_birth DateTime?\n  address       String?\n  city          String? // Thêm tỉnh/thành để dễ lọc khách hàng\n\n  // Phân loại & Trạng thái\n  status CustomerStatus @default(ACTIVE)\n  tier   CustomerTier   @default(BRONZE) // Phân hạng khách hàng để ưu đãi\n  points Int            @default(0) // Điểm tích lũy mua hàng\n\n  // Bảo mật & Hệ thống\n  isVerified Boolean   @default(false) // Đã xác thực email chưa\n  lastLogin  DateTime?\n  adminNote  String? // Ghi chú của Admin về khách này (ví dụ: khách hay boom hàng)\n\n  // Thời gian\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@map(\"customer\")\n}\n",
-  "inlineSchemaHash": "c445def973d438275edb4fd7d0bbf7f921c9a520d6c1a79140c979b38d2d26f1",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Get a free hosted Postgres database in seconds: `npx create-db`\n\ngenerator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../generated/prisma\"\n  binaryTargets = [\"native\", \"windows\", \"debian-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"mongodb\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum Role {\n  USER\n  ADMIN\n  MODERATOR\n  EMPLOYEE\n}\n\nmodel User {\n  id           String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  name         String\n  email        String   @unique\n  password     String\n  phone_number String?\n  address      String?  @default(\"\")\n  avatar       String   @default(\"https://github.com/shadcn.png\")\n  role         Role     @default(USER)\n  isBlocked    Boolean  @default(false)\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n}\n\n// Định nghĩa các tập giá trị (Enums)\nenum Gender {\n  MALE\n  FEMALE\n  OTHER\n  HIDDEN\n}\n\nenum CustomerStatus {\n  ACTIVE // Đang hoạt động bình thường\n  BLOCKED // Đang bị khóa (thay cho isBlocked)\n  PENDING // Chờ xác thực (email/sđt)\n  INACTIVE // Ngừng hoạt động (khách tự đóng tài khoản)\n}\n\nenum CustomerTier {\n  BRONZE // Đồng (Mặc định)\n  SILVER // Bạc\n  GOLD // Vàng\n  DIAMOND // Kim cương\n}\n\nmodel Customer {\n  id String @id @default(auto()) @map(\"_id\") @db.ObjectId\n\n  // Định danh khách hàng (Ví dụ: KH-2024-001)\n  customer_id String @unique\n\n  // Thông tin cơ bản\n  full_name    String\n  email        String  @unique\n  password     String // Lưu hash bằng bcrypt\n  phone_number String? @unique\n  avatar       String? @default(\"https://github.com/shadcn.png\")\n\n  // Thông tin cá nhân & Địa chỉ\n  gender        Gender    @default(MALE)\n  date_of_birth DateTime?\n  address       String?\n  city          String? // Thêm tỉnh/thành để dễ lọc khách hàng\n\n  // Phân loại & Trạng thái\n  status CustomerStatus @default(ACTIVE)\n  tier   CustomerTier   @default(BRONZE) // Phân hạng khách hàng để ưu đãi\n  points Int            @default(0) // Điểm tích lũy mua hàng\n\n  // Bảo mật & Hệ thống\n  isVerified Boolean   @default(false) // Đã xác thực email chưa\n  lastLogin  DateTime?\n  adminNote  String? // Ghi chú của Admin về khách này (ví dụ: khách hay boom hàng)\n\n  // Thời gian\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@map(\"customer\")\n}\n\nmodel Brands {\n  id           String   @id @default(auto()) @map(\"_id\") @db.ObjectId\n  name         String\n  slug         String   @unique\n  logo         String?  @default(\"https://github.com/shadcn.png\")\n  description  String?  @default(\"\")\n  website      String?  @default(\"\")\n  social_links String?  @default(\"\")\n  is_active    Boolean  @default(true)\n  created_at   DateTime @default(now())\n  updated_at   DateTime @updatedAt\n\n  @@map(\"brands\")\n}\n",
+  "inlineSchemaHash": "cea8f2e5cb9bf4f73114041f1f11c42a7301b5fc056a3b7057b2e5cc9322c7e6",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone_number\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"address\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"avatar\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"isBlocked\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Customer\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"customer_id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"full_name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone_number\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"avatar\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"gender\",\"kind\":\"enum\",\"type\":\"Gender\"},{\"name\":\"date_of_birth\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"address\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"CustomerStatus\"},{\"name\":\"tier\",\"kind\":\"enum\",\"type\":\"CustomerTier\"},{\"name\":\"points\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"isVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"lastLogin\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"adminNote\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"customer\"}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone_number\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"address\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"avatar\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"isBlocked\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Customer\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"customer_id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"full_name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone_number\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"avatar\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"gender\",\"kind\":\"enum\",\"type\":\"Gender\"},{\"name\":\"date_of_birth\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"address\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"CustomerStatus\"},{\"name\":\"tier\",\"kind\":\"enum\",\"type\":\"CustomerTier\"},{\"name\":\"points\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"isVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"lastLogin\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"adminNote\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"customer\"},\"Brands\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\",\"dbName\":\"_id\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"slug\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"logo\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"website\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"social_links\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"is_active\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"brands\"}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

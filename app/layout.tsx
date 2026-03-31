@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "./context/auth-context";
 import { ThemeProvider } from "@/components/theme-provider";
+import { LanguageProvider } from "./context/language-context";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -25,7 +26,9 @@ export default function RootLayout({
     <html suppressHydrationWarning lang="vi" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans selection:bg-indigo-100 selection:text-indigo-900 bg-background text-foreground">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <AuthProvider>{children}</AuthProvider>
+          <LanguageProvider>
+            <AuthProvider>{children}</AuthProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

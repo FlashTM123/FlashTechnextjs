@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/auth-context";
+import { useLanguage } from "@/app/context/language-context";
 import {
   Search,
   Plus,
@@ -92,6 +93,7 @@ const getStatusBadgeClass = (status: string) =>
 export default function UsersClient() {
   const router = useRouter();
   const { user, isInitialized } = useAuth();
+  const { t } = useLanguage();
 
   const [users, setUsers]           = useState<UserData[]>([]);
   const [total, setTotal]           = useState(0);
@@ -163,6 +165,11 @@ export default function UsersClient() {
   }, [fetchUsers, searchTerm]);
 
   // ── Handlers ────────────────────────────────
+  const resetForm = () => {
+    setFormData({ name: "", email: "", password: "", phone: "", address: "", role: "USER" as any, status: "active" as any });
+    setEditingUser(null);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -173,8 +180,21 @@ export default function UsersClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-      if (res.ok) { setIsSheetOpen(false); fetchUsers(); }
-    } catch { alert("Error saving user"); } finally { setIsSubmitting(false); }
+      
+      const data = await res.json();
+      
+      if (res.ok) { 
+        setIsSheetOpen(false); 
+        resetForm();
+        fetchUsers(); 
+      } else {
+        alert("Failed to save: " + (data.message || "Unknown error"));
+      }
+    } catch (err: any) { 
+      alert("Error saving user: " + err.message); 
+    } finally { 
+      setIsSubmitting(false); 
+    }
   };
 
   const handleApplyDelete = async () => {
@@ -204,7 +224,7 @@ export default function UsersClient() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <h1 className="text-4xl text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 font-extrabold leading-none tracking-tight">
-              Cộng sự
+              {t("staffMembers")}
             </h1>
             <p className="mt-3 text-slate-500 dark:text-slate-400 font-medium uppercase tracking-widest text-[11px]">
               Flash Tech Administrative Terminal
@@ -235,7 +255,7 @@ export default function UsersClient() {
               }}
               className="h-11 px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-black flex items-center gap-2 shadow-md shadow-indigo-500/20 dark:shadow-indigo-900/40 border border-indigo-500/20 transition-all active:scale-[0.98]"
             >
-              <Plus className="h-5 w-5" /> THÊM MỚI
+              <Plus className="h-5 w-5" /> {t("addNew")}
             </Button>
           </div>
         </div>
@@ -252,7 +272,7 @@ export default function UsersClient() {
              <Search className="absolute left-5 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 dark:group-focus-within:text-indigo-400 transition-colors" />
              <input
                className="w-full h-12 pl-14 pr-4 bg-transparent border-none focus:ring-0 text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 font-bold outline-none transition-colors"
-               placeholder="Tìm tên, email hoặc SĐT..."
+               placeholder={t("searchUsers")}
                value={searchTerm}
                onChange={(e) => setSearchTerm(e.target.value)}
              />
@@ -263,7 +283,7 @@ export default function UsersClient() {
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
               >
-                 <option value="all" className="bg-white dark:bg-[#0A0A0B]">Quyền hạn</option>
+                 <option value="all" className="bg-white dark:bg-[#0A0A0B]">{t("roleText")}</option>
                  {ROLES.map((r) => (
                    <option key={r.id} value={r.id} className="bg-white dark:bg-[#0A0A0B]">
                      {r.id}
@@ -275,8 +295,8 @@ export default function UsersClient() {
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
-                 <option value="all" className="bg-white dark:bg-[#0A0A0B]">Trạng thái</option>
-                 <option value="active" className="bg-white dark:bg-[#0A0A0B]">Active</option>
+                 <option value="all" className="bg-white dark:bg-[#0A0A0B]">{t("statusText")}</option>
+                 <option value="active" className="bg-white dark:bg-[#0A0A0B]">{t("active")}</option>
                  <option value="blocked" className="bg-white dark:bg-[#0A0A0B]">Locked</option>
               </select>
            </div>
@@ -288,8 +308,8 @@ export default function UsersClient() {
              <table className="w-full text-left">
                <thead>
                  <tr className="border-b border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-white/[0.02] transition-colors">
-                    {["Member", "Credential", "Role", "Status", "Created", ""].map((h, i) => (
-                      <th key={h} className={`px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 ${i === 5 ? "text-right" : ""}`}>{h}</th>
+                    {[t("memberCol"), t("credentialCol"), t("roleText"), t("statusText"), t("createdCol"), ""].map((h, i) => (
+                      <th key={i} className={`px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 ${i === 5 ? "text-right" : ""}`}>{h}</th>
                     ))}
                  </tr>
                </thead>
@@ -357,7 +377,7 @@ export default function UsersClient() {
                  ) : (
                    <tr>
                      <td colSpan={6} className="py-24 text-center text-slate-500 dark:text-slate-400 font-black italic tracking-widest uppercase">
-                       No records tracked
+                       {t("noRecords")}
                      </td>
                    </tr>
                  )}
@@ -366,7 +386,7 @@ export default function UsersClient() {
           </div>
           <div className="px-8 py-6 bg-slate-50/50 dark:bg-white/[0.01] border-t border-slate-100 dark:border-white/5 flex items-center justify-between transition-colors">
              <div className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.3em]">
-               Data volume <span className="text-indigo-600 dark:text-indigo-400">{currentPage}</span> / {totalPages}
+               {t("dataVolume")} <span className="text-indigo-600 dark:text-indigo-400">{currentPage}</span> / {totalPages}
              </div>
              <div className="flex gap-3">
                 <Button variant="outline" className="h-10 w-10 p-0 rounded-xl bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/10 hover:translate-x-[-2px] transition-all" disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}><ChevronLeft className="h-5 w-5" /></Button>
@@ -387,28 +407,28 @@ export default function UsersClient() {
                 <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500" />
                 <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.07] mix-blend-overlay pointer-events-none" />
                 <h2 className="text-2xl font-black text-white tracking-tight leading-none mb-2 uppercase relative z-10">
-                  {editingUser ? "EDIT ACCESS" : "NEW ACCESS"}
+                  {editingUser ? t("editAccess") : t("newAccess")}
                 </h2>
                 <p className="text-indigo-400/90 font-bold uppercase tracking-[0.2em] text-[9px] relative z-10">
-                  Administrative Privilege Manager
+                  {t("adminPrivilege")}
                 </p>
               </div>
 
               <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-10 custom-scrollbar relative text-slate-200">
                  <div className="space-y-4">
-                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400 ml-2">ACCOUNT CORE DATA</Label>
+                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400 ml-2">{t("accountCoreData")}</Label>
                     <div className="space-y-5 bg-white/[0.04] p-6 rounded-[28px] border border-white/10">
                        <div className="space-y-1.5">
-                         <Label className="text-slate-400 font-bold ml-1 text-[11px]">Identity Name</Label>
+                         <Label className="text-slate-400 font-bold ml-1 text-[11px]">{t("identityName")}</Label>
                          <Input required className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-500 rounded-[14px] font-bold focus-visible:ring-2 focus-visible:ring-indigo-500/40 focus-visible:border-indigo-500/50" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
                        </div>
                        <div className="space-y-1.5">
-                         <Label className="text-slate-400 font-bold ml-1 text-[11px]">Email Endpoint</Label>
+                         <Label className="text-slate-400 font-bold ml-1 text-[11px]">{t("emailEndpoint")}</Label>
                          <Input type="email" required disabled={!!editingUser} className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-500 rounded-[14px] font-bold focus-visible:ring-2 focus-visible:ring-indigo-500/40 focus-visible:border-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
                        </div>
                        {!editingUser && (
                        <div className="space-y-1.5">
-                         <Label className="text-slate-400 font-bold ml-1 text-[11px]">Master Password</Label>
+                         <Label className="text-slate-400 font-bold ml-1 text-[11px]">{t("masterPassword")}</Label>
                          <Input type="password" required className="h-12 bg-white/5 border-white/10 text-white rounded-[14px] font-bold tracking-[0.15em] focus-visible:ring-2 focus-visible:ring-indigo-500/40 focus-visible:border-indigo-500/50" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
                        </div>
                        )}
@@ -416,7 +436,7 @@ export default function UsersClient() {
                  </div>
 
                  <div className="space-y-4">
-                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400 ml-2">ASSIGN PRIVILEGE</Label>
+                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400 ml-2">{t("assignPrivilege")}</Label>
                     <div className="grid grid-cols-2 gap-4">
                       {ROLES.map(({id, label, icon: Icon}) => {
                          const isSelected = formData.role === id;
@@ -447,15 +467,15 @@ export default function UsersClient() {
                  </div>
 
                  <div className="space-y-4">
-                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400 ml-2">EXTENDED METADATA</Label>
+                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400 ml-2">{t("extendedMetadata")}</Label>
                     <div className="space-y-5 bg-white/[0.04] p-6 rounded-[28px] border border-white/10">
                        <div className="flex gap-4">
                           <div className="flex-1 space-y-1.5">
-                            <Label className="text-slate-400 font-bold ml-1 text-[11px]">Phone</Label>
+                            <Label className="text-slate-400 font-bold ml-1 text-[11px]">{t("phone")}</Label>
                             <Input className="h-12 bg-white/5 border-white/10 text-white rounded-[14px] font-bold focus-visible:ring-2 focus-visible:ring-indigo-500/40 focus-visible:border-indigo-500/50" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
                           </div>
                           <div className="w-1/3 space-y-1.5">
-                            <Label className="text-slate-400 font-bold ml-1 text-[11px]">Status</Label>
+                            <Label className="text-slate-400 font-bold ml-1 text-[11px]">{t("statusText")}</Label>
                             <select className="w-full h-12 px-3 bg-white/5 border border-white/10 rounded-[14px] text-[10px] uppercase font-black text-indigo-300 outline-none cursor-pointer focus-visible:ring-2 focus-visible:ring-indigo-500/40" value={formData.status} onChange={e => setFormData({...formData, status: e.target.value as "active" | "blocked"})}>
                               <option value="active" className="bg-[#0A0A0B] text-white">ACTIVE</option>
                               <option value="blocked" className="bg-[#0A0A0B] text-white">LOCKED</option>
@@ -463,7 +483,7 @@ export default function UsersClient() {
                           </div>
                        </div>
                        <div className="space-y-1.5">
-                          <Label className="text-slate-400 font-bold ml-1 text-[11px]">Working Address</Label>
+                          <Label className="text-slate-400 font-bold ml-1 text-[11px]">{t("workingAddress")}</Label>
                           <Input className="h-12 bg-white/5 border-white/10 text-white rounded-[14px] font-bold focus-visible:ring-2 focus-visible:ring-indigo-500/40 focus-visible:border-indigo-500/50" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} />
                        </div>
                     </div>
@@ -472,7 +492,7 @@ export default function UsersClient() {
 
               <div className="p-6 md:px-8 md:pb-8 shrink-0 border-t border-white/10 bg-[#080809]">
                  <Button type="button" onClick={(e) => { e.preventDefault(); void handleSubmit(e as unknown as React.FormEvent); }} disabled={isSubmitting} className="w-full h-14 rounded-[20px] font-black text-sm uppercase tracking-widest bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white border border-white/10 shadow-lg shadow-indigo-950/50 transition-all flex items-center justify-center gap-3 hover:scale-[1.01] active:scale-[0.99]">
-                   {isSubmitting ? <Loader2 className="animate-spin h-5 w-5" /> : <><CheckCircle2 className="h-5 w-5" /> COMMENCE UPDATE</>}
+                   {isSubmitting ? <Loader2 className="animate-spin h-5 w-5" /> : <><CheckCircle2 className="h-5 w-5" /> {t("commenceUpdate")}</>}
                  </Button>
               </div>
             </div>
@@ -488,15 +508,15 @@ export default function UsersClient() {
                        <AlertTriangle className="h-10 w-10" />
                     </div>
                     <div className="space-y-2">
-                       <h2 className="text-2xl font-black text-white leading-tight">Xóa vĩnh viễn?</h2>
-                       <p className="text-sm font-bold text-slate-400 px-4 leading-relaxed">Bạn đang chuẩn bị xóa định danh <span className="text-rose-400 font-black">{deletingUser?.name}</span>. Hành động này không thể hoàn tác.</p>
+                       <h2 className="text-2xl font-black text-white leading-tight">{t("permanentlyDelete")}</h2>
+                       <p className="text-sm font-bold text-slate-400 px-4 leading-relaxed">{t("deleteWarning")} <span className="text-rose-400 font-black">{deletingUser?.name}</span>. {t("undoneWarning")}</p>
                     </div>
                     <div className="flex flex-col gap-3 pt-2">
                        <Button onClick={handleApplyDelete} className="h-14 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white rounded-2xl font-black border border-rose-400/20 shadow-lg shadow-rose-950/40" disabled={isSubmitting}>
-                          {isSubmitting ? <Loader2 className="animate-spin" /> : "XÁC NHẬN XÓA BỎ"}
+                          {isSubmitting ? <Loader2 className="animate-spin" /> : t("confirmDelete")}
                        </Button>
                        <Button onClick={() => setIsDelModalOpen(false)} variant="ghost" className="h-12 text-slate-400 font-black hover:bg-white/5 hover:text-white rounded-2xl">
-                          QUAY LẠI
+                          {t("goBack")}
                        </Button>
                     </div>
                  </div>

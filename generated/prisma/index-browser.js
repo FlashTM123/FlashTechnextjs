@@ -150,6 +150,19 @@ exports.Prisma.CustomerScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.BrandsScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  logo: 'logo',
+  description: 'description',
+  website: 'website',
+  social_links: 'social_links',
+  is_active: 'is_active',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -189,7 +202,8 @@ exports.CustomerTier = exports.$Enums.CustomerTier = {
 
 exports.Prisma.ModelName = {
   User: 'User',
-  Customer: 'Customer'
+  Customer: 'Customer',
+  Brands: 'Brands'
 };
 
 /**

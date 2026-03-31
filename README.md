@@ -2,7 +2,21 @@
 
 Một nền tảng quản lý doanh nghiệp hiện đại được xây dựng bằng **Next.js 16**, **React 19**, **TypeScript**, **Tailwind CSS 4**, và **Shadcn/ui**.
 
-## 🌟 Cập Nhật Mới Nhất (28/03/2026)
+## 🌟 Cập Nhật Mới Nhất (31/03/2026)
+
+- 🏗️ **Brand Management Module**: Triển khai hoàn chỉnh module quản lý thương hiệu với đầy đủ CRUD (Thêm, Sửa, Xóa).
+- 🖼️ **Image Upload System**: Tích hợp API tải lên hình ảnh (`/api/upload`) lưu trữ trực tiếp vào thư mục `public/uploads`.
+- 🌐 **Global Localization (i18n)**: Hệ thống chuyển đổi ngôn ngữ Anh/Việt toàn diện với `useLanguage` hook.
+- 🗃️ **Database Optimization**: 
+  - Cập nhật Prisma Schema: Chuyển `social_links` sang kiểu `String` để tương thích tốt nhất với MongoDB.
+  - Gỡ bỏ ràng buộc `Unique` không cần thiết cho `phone_number` để tránh lỗi khi dữ liệu trống.
+  - Tích hợp logic `id || _id` để xử lý linh hoạt định dạng ID từ MongoDB Atlas.
+- 💎 **Premium UI/UX**: 
+  - Chuyển đổi Form từ Sheet sang **Dialog Centralized** chuyên nghiệp.
+  - Tối ưu tính bất biến của Slug (chỉ cho phép tạo, không cho sửa để bảo vệ SEO).
+  - Thêm hiệu ứng Loading Spinner và thông báo lỗi chi tiết từ Server.
+
+## 🌟 Cập Nhật Trước Đó (28/03/2026)
 
 - 🎨 **Premium Admin Dashboard Redesign**: Giao diện Layout quản trị viên hoàn toàn mới (Premium), đồng bộ và cao cấp.
 - 🌓 **Chế Độ Giao Diện (Light/Dark Mode)**: Tương thích hoàn toàn giao diện Sáng và Tối (Tailwind CSS Dark mode).
@@ -295,6 +309,6 @@ MIT License - xem file [LICENSE](LICENSE)
 
 ---
 
-**Last Updated**: March 28, 2026
-**Status**: Active Development
-**Recent Features**: Premium Admin Dashboard, Adaptive Light/Dark Mode, Customer Management APIs & User UI
+**Last Updated**: March 31, 2026
+**Status**: Active Development - Brand Management Module Fixed
+**Recent Features**: Brand Management CRUD, Global Localization (En/Vi), Image Upload System, MongoDB ID Robustness.

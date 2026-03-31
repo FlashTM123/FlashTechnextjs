@@ -26,8 +26,8 @@ model User {
   name         String
   email        String   @unique
   password     String
-  phone_number String   @unique
-  address      String
+  phone_number String?
+  address      String? @default("")
   avatar       String   @default("https://github.com/shadcn.png")
   role         Role     @default(USER)
   isBlocked    Boolean  @default(false)
@@ -90,4 +90,19 @@ model Customer {
   updatedAt     DateTime       @updatedAt
 
   @@map("customer")
+}
+
+model Brands {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+  slug String @unique
+  logo String? @default("https://github.com/shadcn.png")
+  description String? @default("")
+  website String? @default("")
+  social_links String? @default("")
+  is_active Boolean @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("brands")
 }
