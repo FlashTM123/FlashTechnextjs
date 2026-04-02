@@ -588,7 +588,7 @@ export default function ProductsPage() {
                       <Label className="uppercase text-[10px] font-black tracking-widest text-slate-500">{t("brand")}</Label>
                       <Select
                         value={formData.brand_id}
-                        onValueChange={(v: string) => setFormData({ ...formData, brand_id: v })}
+                        onValueChange={(v: string | null) => v && setFormData({ ...formData, brand_id: v })}
                       >
                         <SelectTrigger className="h-12 rounded-xl bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10">
                           <SelectValue placeholder={t("selectBrand")}>
@@ -606,7 +606,7 @@ export default function ProductsPage() {
                       <Label className="uppercase text-[10px] font-black tracking-widest text-slate-500">{t("category")}</Label>
                       <Select
                         value={formData.category}
-                        onValueChange={(v: string) => setFormData({ ...formData, category: v })}
+                        onValueChange={(v: string | null) => v && setFormData({ ...formData, category: v })}
                       >
                         <SelectTrigger className="h-12 rounded-xl bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10">
                           <SelectValue placeholder={t("selectCategory")}>
