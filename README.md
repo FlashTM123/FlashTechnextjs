@@ -2,7 +2,14 @@
 
 Một nền tảng quản lý doanh nghiệp hiện đại được xây dựng bằng **Next.js 16**, **React 19**, **TypeScript**, **Tailwind CSS 4**, và **Shadcn/ui**.
 
-## 🌟 Cập Nhật Mới Nhất (31/03/2026)
+## 🌟 Cập Nhật Mới Nhất (02/04/2026)
+
+- 🎨 **Unified Professional Dialogs**: Triển khai component `ConfirmDialog` tùy chỉnh, thay thế hoàn toàn các hàm `confirm()` mặc định của trình duyệt bằng giao diện Modal cao cấp.
+- 🔔 **Rich Toast Notifications**: Nâng cấp hệ thống thông báo `sonner` với giao diện "Rich Toast" (bao gồm Title, Description và Icons ngữ cảnh: Package, Trash, Sparkles...).
+- 🎭 **Advanced Animations**: Tích hợp **framer-motion** để xử lý các hiệu ứng chuyển cảnh, modal scale-in và các micro-interactions chuyên nghiệp.
+- 🛠️ **System-wide Integration**: Đồng bộ hóa trải nghiệm người dùng chuyên nghiệp trên toàn bộ các module: Sản phẩm (Products), Thương hiệu (Brands) và Thành viên (Users).
+
+## 🌟 Cập Nhật Trước Đó (31/03/2026)
 
 - 🏗️ **Brand Management Module**: Triển khai hoàn chỉnh module quản lý thương hiệu với đầy đủ CRUD (Thêm, Sửa, Xóa).
 - 🖼️ **Image Upload System**: Tích hợp API tải lên hình ảnh (`/api/upload`) lưu trữ trực tiếp vào thư mục `public/uploads`.
@@ -167,6 +174,7 @@ enum Role {
 | **MongoDB** | Latest | Database |
 | **Lucide React** | 1.6.0 | Icons |
 | **React Context** | 19 | State Management |
+| **Framer Motion** | Latest | Premium Animations |
 | **Next.js App Router** | 16.2.1 | Routing |
 
 ## 📦 Scripts
@@ -309,6 +317,6 @@ MIT License - xem file [LICENSE](LICENSE)
 
 ---
 
-**Last Updated**: March 31, 2026
-**Status**: Active Development - Brand Management Module Fixed
-**Recent Features**: Brand Management CRUD, Global Localization (En/Vi), Image Upload System, MongoDB ID Robustness.
+**Last Updated**: April 02, 2026
+**Status**: Active Development - Professional UI/UX Overhaul
+**Recent Features**: ConfirmDialog System, Rich Toast Notifications, Framer Motion Integration, Brand & Product CRUD.

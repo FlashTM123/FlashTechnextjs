@@ -21,11 +21,11 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.19.2
+ * Prisma Client JS version: 6.19.3
  * Query Engine version: c2990dca591cba766e3b7ef5d9e8a84796e47ab7
  */
 Prisma.prismaVersion = {
-  client: "6.19.2",
+  client: "6.19.3",
   engine: "c2990dca591cba766e3b7ef5d9e8a84796e47ab7"
 }
 
@@ -163,6 +163,40 @@ exports.Prisma.BrandsScalarFieldEnum = {
   updated_at: 'updated_at'
 };
 
+exports.Prisma.ProductScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  details: 'details',
+  base_price: 'base_price',
+  original_price: 'original_price',
+  images: 'images',
+  brand_id: 'brand_id',
+  category: 'category',
+  specs: 'specs',
+  is_active: 'is_active',
+  is_featured: 'is_featured',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
+exports.Prisma.ProductVariantScalarFieldEnum = {
+  id: 'id',
+  product_id: 'product_id',
+  name: 'name',
+  sku: 'sku',
+  color: 'color',
+  storage: 'storage',
+  ram: 'ram',
+  price: 'price',
+  original_price: 'original_price',
+  stock: 'stock',
+  images: 'images',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -200,10 +234,23 @@ exports.CustomerTier = exports.$Enums.CustomerTier = {
   DIAMOND: 'DIAMOND'
 };
 
+exports.CategoryType = exports.$Enums.CategoryType = {
+  SMARTPHONE: 'SMARTPHONE',
+  LAPTOP: 'LAPTOP',
+  TABLET: 'TABLET',
+  SMARTWATCH: 'SMARTWATCH',
+  AUDIO: 'AUDIO',
+  ACCESSORIES: 'ACCESSORIES',
+  COMPONENT: 'COMPONENT',
+  OTHER: 'OTHER'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Customer: 'Customer',
-  Brands: 'Brands'
+  Brands: 'Brands',
+  Product: 'Product',
+  ProductVariant: 'ProductVariant'
 };
 
 /**

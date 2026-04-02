@@ -29,8 +29,11 @@ import {
   Settings2,
   Briefcase,
   AlertTriangle,
-  X
+  X,
+  Package,
 } from "lucide-react";
+import { toast } from "sonner";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -187,11 +190,20 @@ export default function UsersClient() {
         setIsSheetOpen(false); 
         resetForm();
         fetchUsers(); 
+        toast.success(isEdit ? "Cập nhật tài khoản thành công" : "Tạo tài khoản mới thành công", {
+          description: isEdit 
+            ? `Thông tin bảo mật của "${formData.name}" đã được đồng bộ.` 
+            : `Nhân viên "${formData.name}" đã có thể truy cập hệ thống.`,
+          icon: <CheckCircle2 size={18} className="text-emerald-500" />,
+        });
       } else {
-        alert("Failed to save: " + (data.message || "Unknown error"));
+        toast.error("Lỗi: " + (data.message || "Không thể lưu thông tin"), {
+          description: "Vui lòng kiểm tra lại quyền hạn hoặc email.",
+          icon: <AlertCircle size={18} className="text-rose-500" />,
+        });
       }
     } catch (err: any) { 
-      alert("Error saving user: " + err.message); 
+      toast.error("Lỗi hệ thống: " + err.message); 
     } finally { 
       setIsSubmitting(false); 
     }
@@ -206,14 +218,40 @@ export default function UsersClient() {
         setUsers(prev => prev.filter(u => u.id !== deletingUser.id));
         setTotal(t => t - 1);
         setIsDelModalOpen(false);
+        toast.success("Đã gỡ bỏ quyền truy cập", {
+          description: `Tài khoản ${deletingUser.name} đã được xóa vĩnh viễn.`,
+          icon: <Trash2 size={18} className="text-rose-500" />,
+        });
+      } else {
+        toast.error("Không thể xóa người dùng");
       }
-    } catch { alert("Failed to delete"); } finally { setIsSubmitting(false); }
+    } catch { 
+      toast.error("Lỗi kết nối máy chủ"); 
+    } finally { 
+      setIsSubmitting(false); 
+    }
   };
 
   const handleBlockToggle = async (u: UserData) => {
     const next = u.status === "active" ? "blocked" : "active";
-    await fetch(`/api/admin/users/${u.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: next }) });
-    setUsers(prev => prev.map(item => item.id === u.id ? { ...item, status: next } : item));
+    try {
+      const res = await fetch(`/api/admin/users/${u.id}`, { 
+        method: "PATCH", 
+        headers: { "Content-Type": "application/json" }, 
+        body: JSON.stringify({ status: next }) 
+      });
+      if (res.ok) {
+        setUsers(prev => prev.map(item => item.id === u.id ? { ...item, status: next } : item));
+        toast.success(next === 'active' ? "Đã mở khóa tài khoản" : "Đã khóa tài khoản", {
+          description: next === 'active' 
+            ? `Nhân viên ${u.name} hiện có thể đăng nhập lại.` 
+            : `Mọi phiên làm việc của ${u.name} đã bị chấm dứt.`,
+          icon: next === 'active' ? <Unlock size={18} className="text-emerald-500" /> : <Lock size={18} className="text-amber-500" />,
+        });
+      }
+    } catch (err) {
+      toast.error("Lỗi khi thay đổi trạng thái");
+    }
   };
 
   return (
@@ -499,30 +537,17 @@ export default function UsersClient() {
           </div>
         )}
 
-        {isDelModalOpen && (
-           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#070709]/85 backdrop-blur-md animate-in fade-in transition-all">
-              <div className="bg-[#0A0A0B] border border-white/10 rounded-[32px] shadow-[0_0_60px_rgba(0,0,0,0.65)] w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200">
-                 <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-rose-500/80 via-rose-400/50 to-rose-500/80" />
-                 <div className="p-10 text-center space-y-6">
-                    <div className="mx-auto w-20 h-20 bg-rose-500/10 text-rose-400 border border-rose-500/25 rounded-3xl flex items-center justify-center">
-                       <AlertTriangle className="h-10 w-10" />
-                    </div>
-                    <div className="space-y-2">
-                       <h2 className="text-2xl font-black text-white leading-tight">{t("permanentlyDelete")}</h2>
-                       <p className="text-sm font-bold text-slate-400 px-4 leading-relaxed">{t("deleteWarning")} <span className="text-rose-400 font-black">{deletingUser?.name}</span>. {t("undoneWarning")}</p>
-                    </div>
-                    <div className="flex flex-col gap-3 pt-2">
-                       <Button onClick={handleApplyDelete} className="h-14 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white rounded-2xl font-black border border-rose-400/20 shadow-lg shadow-rose-950/40" disabled={isSubmitting}>
-                          {isSubmitting ? <Loader2 className="animate-spin" /> : t("confirmDelete")}
-                       </Button>
-                       <Button onClick={() => setIsDelModalOpen(false)} variant="ghost" className="h-12 text-slate-400 font-black hover:bg-white/5 hover:text-white rounded-2xl">
-                          {t("goBack")}
-                       </Button>
-                    </div>
-                 </div>
-              </div>
-           </div>
-        )}
+        <ConfirmDialog
+          isOpen={isDelModalOpen}
+          onOpenChange={setIsDelModalOpen}
+          onConfirm={handleApplyDelete}
+          isLoading={isSubmitting}
+          variant="danger"
+          title="Xóa vĩnh viễn tài khoản?"
+          description={`Nhân viên "${deletingUser?.name}" sẽ mất mọi quyền truy cập vào hệ thống Administrative Terminal. Hành động này không thể hoàn tác.`}
+          confirmText="Huỷ bỏ quyền"
+          cancelText="Để tôi xem lại"
+        />
 
       </div>
     </div>

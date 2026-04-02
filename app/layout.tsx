@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "./context/auth-context";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "./context/language-context";
+import { Toaster } from "sonner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -27,7 +28,10 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-sans selection:bg-indigo-100 selection:text-indigo-900 bg-background text-foreground">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <LanguageProvider>
-            <AuthProvider>{children}</AuthProvider>
+            <AuthProvider>
+              {children}
+              <Toaster position="top-right" richColors />
+            </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>

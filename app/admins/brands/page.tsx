@@ -3,6 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import { Plus, Search, MoreVertical, Edit, Trash2, Globe, Link as LinkIcon, AlertCircle, Upload, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Package } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/app/context/language-context";
@@ -48,6 +51,9 @@ export default function BrandsPage() {
 
   const [isEditMode, setIsEditMode] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [brandToDelete, setBrandToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchBrands = async () => {
     try {
@@ -115,14 +121,21 @@ export default function BrandsPage() {
         setFormData({ id: "", name: "", slug: "", logo: "", description: "", website: "", is_active: true });
         setIsEditMode(false);
         fetchBrands();
+        toast.success(isEditMode ? "Cập nhật thương hiệu thành công" : "Thêm thương hiệu mới thành công", {
+          description: isEditMode 
+            ? `Dữ liệu của "${formData.name}" đã được cập nhật.` 
+            : `Thương hiệu "${formData.name}" đã được lưu vào hệ thống.`,
+          icon: <Package size={18} className="text-emerald-500" />,
+        });
       } else {
-        const errorMsg = data.error || "Failed to process brand";
+        const errorMsg = data.error || "Không thể xử lý thương hiệu";
         setError(errorMsg);
-        alert(errorMsg);
+        toast.error(errorMsg, {
+          icon: <AlertCircle size={18} className="text-rose-500" />,
+        });
       }
     } catch (err: any) {
-      setError("An unexpected error occurred");
-      alert("Error: " + err.message);
+      toast.error("Lỗi hệ thống: " + err.message);
     } finally {
       setFormLoading(false);
     }
@@ -142,20 +155,33 @@ export default function BrandsPage() {
     setIsAddSheetOpen(true);
   };
 
-  const handleDeleteClick = async (id: string, name: string) => {
-    console.log("Clicked Delete for ID:", id, "Name:", name);
-    if (!confirm(`Are you sure you want to permanently delete brand: ${name}?`)) return;
+  const handleDeleteClick = (id: string, name: string) => {
+    setBrandToDelete({ id, name });
+    setDeleteConfirmOpen(true);
+  };
 
+  const confirmDelete = async () => {
+    if (!brandToDelete) return;
+    setIsDeleting(true);
     try {
-      const res = await fetch(`/api/brands/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/brands/${brandToDelete.id}`, { method: "DELETE" });
       if (res.ok) {
+        toast.success("Đã xóa thương hiệu", {
+          description: `Thương hiệu "${brandToDelete.name}" đã được gỡ bỏ.`,
+          icon: <Trash2 size={18} className="text-rose-500" />,
+        });
         fetchBrands();
+        setDeleteConfirmOpen(false);
       } else {
         const errorData = await res.json();
-        alert("Failed to delete brand: " + (errorData.error || "Unknown Error"));
+        toast.error("Lỗi: " + (errorData.error || "Không thể xóa"), {
+          description: "Yêu cầu xóa không thể hoàn thành, vui lòng thử lại sau.",
+        });
       }
     } catch (err: any) {
-      alert("Error deleting brand: " + err.message);
+      toast.error("Lỗi kết nối: " + err.message);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -163,24 +189,28 @@ export default function BrandsPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const data = new FormData();
-    data.append("file", file);
-
+    setFormLoading(true);
     try {
-      setFormLoading(true);
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: data,
-      });
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = async () => {
+        const base64 = reader.result as string;
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ base64, filename: file.name }),
+        });
 
-      if (res.ok) {
-        const { url } = await res.json();
-        setFormData(prev => ({ ...prev, logo: url }));
-      } else {
-        alert("Failed to upload image");
-      }
+        if (res.ok) {
+          const { url } = await res.json();
+          setFormData(prev => ({ ...prev, logo: url }));
+          toast.success("Đã tải lên logo thành công");
+        } else {
+          toast.error("Lỗi tải lên hình ảnh");
+        }
+      };
     } catch (err) {
-      alert("Error uploading image");
+      toast.error("Lỗi kết nối khi tải ảnh");
     } finally {
       setFormLoading(false);
     }
@@ -416,6 +446,18 @@ export default function BrandsPage() {
           </table>
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        onConfirm={confirmDelete}
+        isLoading={isDeleting}
+        variant="danger"
+        title="Xóa thương hiệu?"
+        description={`Bạn có chắc chắn muốn xóa thương hiệu "${brandToDelete?.name}"? Tất cả sản phẩm thuộc thương hiệu này sẽ bị ảnh hưởng.`}
+        confirmText="Xác nhận xóa"
+        cancelText="Để tôi xem lại"
+      />
     </div>
   );
 }

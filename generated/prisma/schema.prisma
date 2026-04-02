@@ -105,5 +105,66 @@ model Brands {
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
+  products Product[] // Relationship with Products
+
   @@map("brands")
+}
+
+enum CategoryType {
+  SMARTPHONE
+  LAPTOP
+  TABLET
+  SMARTWATCH
+  AUDIO
+  ACCESSORIES
+  COMPONENT
+  OTHER
+}
+
+model Product {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  slug           String   @unique
+  description    String?
+  details        String?
+  base_price     Float
+  original_price Float?
+  images         String[]
+
+  brand_id String @db.ObjectId
+  brand    Brands @relation(fields: [brand_id], references: [id])
+
+  category CategoryType @default(SMARTPHONE)
+
+  specs Json?
+
+  variants ProductVariant[]
+
+  is_active   Boolean  @default(true)
+  is_featured Boolean  @default(false)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("products")
+}
+
+model ProductVariant {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  product_id String  @db.ObjectId
+  product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  name String
+  sku  String @unique
+
+  color   String?
+  storage String?
+  ram     String?
+
+  price          Float
+  original_price Float?
+  stock          Int      @default(0)
+  images         String[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }

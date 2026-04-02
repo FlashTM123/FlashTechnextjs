@@ -1,40 +1,33 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 
-export async function POST(req: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const data = await req.formData();
-    const file: File | null = data.get("file") as unknown as File;
-    
-    if (!file) {
-      return NextResponse.json({ success: false, error: "No file provided" }, { status: 400 });
+    const formData = await request.json();
+    const { base64, filename } = formData;
+
+    if (!base64) {
+      return NextResponse.json({ error: "No image data provided" }, { status: 400 });
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    // Xử lý dữ liệu Base64
+    const buffer = Buffer.from(base64.split(",")[1], "base64");
+    const ext = path.extname(filename) || ".png";
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9);
+    const newFilename = `${uniqueSuffix}${ext}`;
+    
+    // Đảm bảo thư mục tồn tại
+    const uploadDir = path.join(process.cwd(), "public", "uploads");
+    await mkdir(uploadDir, { recursive: true });
+    
+    const filePath = path.join(uploadDir, newFilename);
+    await writeFile(filePath, buffer);
 
-    // Create unique filename
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const filename = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-    const saveName = `${uniqueSuffix}-${filename}`;
-    
-    const uploadDir = path.join(process.cwd(), "public/uploads");
-    
-    try {
-      await mkdir(uploadDir, { recursive: true });
-    } catch (e) {
-      // Ignore if exists
-    }
-    
-    const filepath = path.join(uploadDir, saveName);
-    await writeFile(filepath, buffer);
-    
-    const fileUrl = `/uploads/${saveName}`;
-
-    return NextResponse.json({ success: true, url: fileUrl });
+    const fileUrl = `/uploads/${newFilename}`;
+    return NextResponse.json({ url: fileUrl });
   } catch (error: any) {
-    console.error("Upload error:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    console.error("Upload Error:", error);
+    return NextResponse.json({ error: "Upload failed: " + error.message }, { status: 500 });
   }
 }
