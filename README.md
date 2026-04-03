@@ -1,13 +1,20 @@
 # FlashTech - Modern Admin Dashboard
 
-Một nền tảng quản lý doanh nghiệp hiện đại được xây dựng bằng **Next.js 16**, **React 19**, **TypeScript**, **Tailwind CSS 4**, và **Shadcn/ui**.
+Một nền tảng quản lý thương mại điện tử chuyên nghiệp được xây dựng bằng **Next.js 16**, **React 19**, **TypeScript**, **Tailwind CSS 4**, và **Shadcn/ui**.
 
-## 🌟 Cập Nhật Mới Nhất (02/04/2026)
+## 🌟 Cập Nhật Mới Nhất (03/04/2026)
 
-- 🎨 **Unified Professional Dialogs**: Triển khai component `ConfirmDialog` tùy chỉnh, thay thế hoàn toàn các hàm `confirm()` mặc định của trình duyệt bằng giao diện Modal cao cấp.
-- 🔔 **Rich Toast Notifications**: Nâng cấp hệ thống thông báo `sonner` với giao diện "Rich Toast" (bao gồm Title, Description và Icons ngữ cảnh: Package, Trash, Sparkles...).
-- 🎭 **Advanced Animations**: Tích hợp **framer-motion** để xử lý các hiệu ứng chuyển cảnh, modal scale-in và các micro-interactions chuyên nghiệp.
-- 🛠️ **System-wide Integration**: Đồng bộ hóa trải nghiệm người dùng chuyên nghiệp trên toàn bộ các module: Sản phẩm (Products), Thương hiệu (Brands) và Thành viên (Users).
+- 🧠 **Smart AI Content Engine**: Nâng cấp hệ thống AI có khả năng "tự nhận diện" loại sản phẩm qua tên gọi (RAM, SSD, Laptop, Watch...) để tự động tạo mô tả và kỹ thuật review chính xác 100% với thông số cấu hình.
+- 🔍 **Advanced Filtering System**: Triển khai bộ lọc đa tầng (Multi-criteria) cho phép lọc sản phẩm theo Brand, Category, và trạng thái chi tiết (Đang bán, Đang ẩn, Hết hàng, Còn hàng).
+- 🏷️ **Dynamic Variant Config**: Hệ thống cấu hình biến thể thông minh, tự động thay đổi các ô nhập liệu (Input) dựa trên danh mục sản phẩm (Ví dụ: Laptop hiện CPU/GPU, Smartphone hiện Dung lượng/Màu).
+- 📊 **Status & Stock Visibility**: Bổ sung hệ thống nhãn (Badges) trực quan trên Card sản phẩm, hiển thị thời gian thực trạng thái kinh doanh và tình trạng kho hàng được tính toán tự động.
+
+## 🌟 Cập Nhật Trước Đó (02/04/2026)
+
+- 🎨 **Unified Professional Dialogs**: Triển khai component `ConfirmDialog` tùy chỉnh, thay thế hoàn toàn các hàm `confirm()` mặc định bằng giao diện Modal cao cấp.
+- 🔔 **Rich Toast Notifications**: Nâng cấp hệ thống thông báo `sonner` với giao diện "Rich Toast" (Package, Trash, Sparkles...).
+- 🎭 **Advanced Animations**: Tích hợp **framer-motion** xử lý các hiệu ứng chuyển cảnh, modal scale-in và micro-interactions.
+- 🛠️ **System-wide Integration**: Đồng bộ hóa trải nghiệm người dùng trên toàn bộ các module: Sản phẩm, Thương hiệu và Thành viên.
 
 ## 🌟 Cập Nhật Trước Đó (31/03/2026)
 
@@ -43,8 +50,10 @@ Một nền tảng quản lý doanh nghiệp hiện đại được xây dựng 
 - 🔔 **Real-time Notifications** - Thông báo real-time
 - 📊 **Dashboard Analytics** - Biểu đồ và thống kê
 - 👥 **User Management** - Quản lý người dùng
-- 📦 **Product Management** - Quản lý sản phẩm
-- 🛒 **Order Management** - Quản lý đơn hàng
+- 📦 **Smart Product Management** - Quản lý sản phẩm với biến thể động
+- 🤖 **AI Content Generation** - Tự động tạo mô tả và SKU theo thông số
+- 🔍 **Power Filtering** - Bộ lọc nâng cao theo trạng thái và cấu hình
+- 🛒 **Order Management** - Quản lý đơn hàng (Đang phát triển)
 
 ### Backend (Prisma + MongoDB)
 - 🗄️ **MongoDB Integration** - Cơ sở dữ liệu NoSQL
@@ -317,6 +326,6 @@ MIT License - xem file [LICENSE](LICENSE)
 
 ---
 
-**Last Updated**: April 02, 2026
-**Status**: Active Development - Professional UI/UX Overhaul
-**Recent Features**: ConfirmDialog System, Rich Toast Notifications, Framer Motion Integration, Brand & Product CRUD.
+**Last Updated**: April 03, 2026
+**Status**: Active Development - Advanced AI & Inventory Optimization
+**Recent Features**: Smart AI Engine (Spec-aware), Advanced Filtering, Dynamic Variants, Status/Stock Visibility.

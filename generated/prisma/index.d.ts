@@ -5708,6 +5708,7 @@ export namespace Prisma {
     original_price: number
     stock: number
     images: number
+    specs: number
     created_at: number
     updated_at: number
     _all: number
@@ -5768,6 +5769,7 @@ export namespace Prisma {
     original_price?: true
     stock?: true
     images?: true
+    specs?: true
     created_at?: true
     updated_at?: true
     _all?: true
@@ -5871,6 +5873,7 @@ export namespace Prisma {
     original_price: number | null
     stock: number
     images: string[]
+    specs: JsonValue | null
     created_at: Date
     updated_at: Date
     _count: ProductVariantCountAggregateOutputType | null
@@ -5906,6 +5909,7 @@ export namespace Prisma {
     original_price?: boolean
     stock?: boolean
     images?: boolean
+    specs?: boolean
     created_at?: boolean
     updated_at?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -5925,11 +5929,12 @@ export namespace Prisma {
     original_price?: boolean
     stock?: boolean
     images?: boolean
+    specs?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
 
-  export type ProductVariantOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "product_id" | "name" | "sku" | "color" | "storage" | "ram" | "price" | "original_price" | "stock" | "images" | "created_at" | "updated_at", ExtArgs["result"]["productVariant"]>
+  export type ProductVariantOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "product_id" | "name" | "sku" | "color" | "storage" | "ram" | "price" | "original_price" | "stock" | "images" | "specs" | "created_at" | "updated_at", ExtArgs["result"]["productVariant"]>
   export type ProductVariantInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }
@@ -5951,6 +5956,7 @@ export namespace Prisma {
       original_price: number | null
       stock: number
       images: string[]
+      specs: Prisma.JsonValue | null
       created_at: Date
       updated_at: Date
     }, ExtArgs["result"]["productVariant"]>
@@ -6357,6 +6363,7 @@ export namespace Prisma {
     readonly original_price: FieldRef<"ProductVariant", 'Float'>
     readonly stock: FieldRef<"ProductVariant", 'Int'>
     readonly images: FieldRef<"ProductVariant", 'String[]'>
+    readonly specs: FieldRef<"ProductVariant", 'Json'>
     readonly created_at: FieldRef<"ProductVariant", 'DateTime'>
     readonly updated_at: FieldRef<"ProductVariant", 'DateTime'>
   }
@@ -6842,6 +6849,7 @@ export namespace Prisma {
     original_price: 'original_price',
     stock: 'stock',
     images: 'images',
+    specs: 'specs',
     created_at: 'created_at',
     updated_at: 'updated_at'
   };
@@ -7424,6 +7432,7 @@ export namespace Prisma {
     original_price?: FloatNullableFilter<"ProductVariant"> | number | null
     stock?: IntFilter<"ProductVariant"> | number
     images?: StringNullableListFilter<"ProductVariant">
+    specs?: JsonNullableFilter<"ProductVariant">
     created_at?: DateTimeFilter<"ProductVariant"> | Date | string
     updated_at?: DateTimeFilter<"ProductVariant"> | Date | string
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
@@ -7441,6 +7450,7 @@ export namespace Prisma {
     original_price?: SortOrder
     stock?: SortOrder
     images?: SortOrder
+    specs?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     product?: ProductOrderByWithRelationInput
@@ -7461,6 +7471,7 @@ export namespace Prisma {
     original_price?: FloatNullableFilter<"ProductVariant"> | number | null
     stock?: IntFilter<"ProductVariant"> | number
     images?: StringNullableListFilter<"ProductVariant">
+    specs?: JsonNullableFilter<"ProductVariant">
     created_at?: DateTimeFilter<"ProductVariant"> | Date | string
     updated_at?: DateTimeFilter<"ProductVariant"> | Date | string
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
@@ -7478,6 +7489,7 @@ export namespace Prisma {
     original_price?: SortOrder
     stock?: SortOrder
     images?: SortOrder
+    specs?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     _count?: ProductVariantCountOrderByAggregateInput
@@ -7502,6 +7514,7 @@ export namespace Prisma {
     original_price?: FloatNullableWithAggregatesFilter<"ProductVariant"> | number | null
     stock?: IntWithAggregatesFilter<"ProductVariant"> | number
     images?: StringNullableListFilter<"ProductVariant">
+    specs?: JsonNullableWithAggregatesFilter<"ProductVariant">
     created_at?: DateTimeWithAggregatesFilter<"ProductVariant"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"ProductVariant"> | Date | string
   }
@@ -7977,6 +7990,7 @@ export namespace Prisma {
     original_price?: number | null
     stock?: number
     images?: ProductVariantCreateimagesInput | string[]
+    specs?: InputJsonValue | null
     created_at?: Date | string
     updated_at?: Date | string
     product: ProductCreateNestedOneWithoutVariantsInput
@@ -7994,6 +8008,7 @@ export namespace Prisma {
     original_price?: number | null
     stock?: number
     images?: ProductVariantCreateimagesInput | string[]
+    specs?: InputJsonValue | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -8008,6 +8023,7 @@ export namespace Prisma {
     original_price?: NullableFloatFieldUpdateOperationsInput | number | null
     stock?: IntFieldUpdateOperationsInput | number
     images?: ProductVariantUpdateimagesInput | string[]
+    specs?: InputJsonValue | InputJsonValue | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     product?: ProductUpdateOneRequiredWithoutVariantsNestedInput
@@ -8024,6 +8040,7 @@ export namespace Prisma {
     original_price?: NullableFloatFieldUpdateOperationsInput | number | null
     stock?: IntFieldUpdateOperationsInput | number
     images?: ProductVariantUpdateimagesInput | string[]
+    specs?: InputJsonValue | InputJsonValue | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -8040,6 +8057,7 @@ export namespace Prisma {
     original_price?: number | null
     stock?: number
     images?: ProductVariantCreateimagesInput | string[]
+    specs?: InputJsonValue | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -8054,6 +8072,7 @@ export namespace Prisma {
     original_price?: NullableFloatFieldUpdateOperationsInput | number | null
     stock?: IntFieldUpdateOperationsInput | number
     images?: ProductVariantUpdateimagesInput | string[]
+    specs?: InputJsonValue | InputJsonValue | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -8069,6 +8088,7 @@ export namespace Prisma {
     original_price?: NullableFloatFieldUpdateOperationsInput | number | null
     stock?: IntFieldUpdateOperationsInput | number
     images?: ProductVariantUpdateimagesInput | string[]
+    specs?: InputJsonValue | InputJsonValue | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -8666,6 +8686,7 @@ export namespace Prisma {
     original_price?: SortOrder
     stock?: SortOrder
     images?: SortOrder
+    specs?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -9354,6 +9375,7 @@ export namespace Prisma {
     original_price?: number | null
     stock?: number
     images?: ProductVariantCreateimagesInput | string[]
+    specs?: InputJsonValue | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -9369,6 +9391,7 @@ export namespace Prisma {
     original_price?: number | null
     stock?: number
     images?: ProductVariantCreateimagesInput | string[]
+    specs?: InputJsonValue | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -9448,6 +9471,7 @@ export namespace Prisma {
     original_price?: FloatNullableFilter<"ProductVariant"> | number | null
     stock?: IntFilter<"ProductVariant"> | number
     images?: StringNullableListFilter<"ProductVariant">
+    specs?: JsonNullableFilter<"ProductVariant">
     created_at?: DateTimeFilter<"ProductVariant"> | Date | string
     updated_at?: DateTimeFilter<"ProductVariant"> | Date | string
   }
@@ -9616,6 +9640,7 @@ export namespace Prisma {
     original_price?: number | null
     stock?: number
     images?: ProductVariantCreateimagesInput | string[]
+    specs?: InputJsonValue | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -9630,6 +9655,7 @@ export namespace Prisma {
     original_price?: NullableFloatFieldUpdateOperationsInput | number | null
     stock?: IntFieldUpdateOperationsInput | number
     images?: ProductVariantUpdateimagesInput | string[]
+    specs?: InputJsonValue | InputJsonValue | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -9644,6 +9670,7 @@ export namespace Prisma {
     original_price?: NullableFloatFieldUpdateOperationsInput | number | null
     stock?: IntFieldUpdateOperationsInput | number
     images?: ProductVariantUpdateimagesInput | string[]
+    specs?: InputJsonValue | InputJsonValue | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -9658,6 +9685,7 @@ export namespace Prisma {
     original_price?: NullableFloatFieldUpdateOperationsInput | number | null
     stock?: IntFieldUpdateOperationsInput | number
     images?: ProductVariantUpdateimagesInput | string[]
+    specs?: InputJsonValue | InputJsonValue | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }

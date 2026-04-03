@@ -50,6 +50,7 @@ export async function PATCH(
             original_price: v.original_price ? parseFloat(v.original_price) : null,
             stock: parseInt(v.stock),
             images: v.images || [],
+            specs: v.specs || {},
           }))
         }
       },

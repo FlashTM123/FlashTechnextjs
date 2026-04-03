@@ -163,6 +163,7 @@ model ProductVariant {
   original_price Float? 
   stock       Int      @default(0) 
   images      String[] 
+  specs       Json?
 
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
