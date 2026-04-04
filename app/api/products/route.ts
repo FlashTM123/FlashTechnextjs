@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { 
       name, slug, description, details, base_price, original_price, images, 
-      brand_id, category, specs, variants 
+      brand_id, category, specs, variants, is_active, is_featured 
     } = body;
 
     if (!name || !slug || !brand_id || !category) {
@@ -43,6 +43,8 @@ export async function POST(request: Request) {
         brand_id,
         category, // Gán trực tiếp giá trị Enum như 'SMARTPHONE'
         specs: specs || {},
+        is_active: is_active !== undefined ? is_active : true,
+        is_featured: is_featured !== undefined ? is_featured : false,
         variants: {
           create: variants.map((v: any) => ({
             name: v.name,

@@ -2,7 +2,15 @@
 
 Một nền tảng quản lý thương mại điện tử chuyên nghiệp được xây dựng bằng **Next.js 16**, **React 19**, **TypeScript**, **Tailwind CSS 4**, và **Shadcn/ui**.
 
-## 🌟 Cập Nhật Mới Nhất (03/04/2026)
+## 🌟 Mới Nhất: Luxury Storefront Redesign & Data Sync (04/04/2026)
+
+- 🎨 **Luxury Minimalist Product Detail**: Đại tu toàn diện trang chi tiết sản phẩm theo phong cách tối giản sang trọng. Tối ưu hóa phân cấp thị giác, sử dụng khoảng trắng thông minh và typography chuyên nghiệp.
+- ⚡ **Next.js Image Performance**: Tối ưu hóa 100% hiệu năng hình ảnh với thuộc tính `sizes`, `priority` (LCP) và xử lý triệt để các cảnh báo về `position` trong console.
+- 📊 **Data-Driven Specifications**: Tích hợp sâu thông số kỹ thuật từ Database (JSON). Hệ thống tự động trích xuất **"Cấu hình nổi bật"** ngay tại phần mua hàng và có cơ chế fallback thông minh.
+- 🏷️ **Dynamic Variant Labeling**: Sửa lỗi hiển thị cấu hình cho các sản phẩm không có thuộc tính Color/Storage (như RAM, phụ kiện), tự động nhận diện nhãn từ tên phiên bản.
+- 🛒 **Premium Purchase Experience**: Nâng cấp Sticky Buy Bar và hệ thống chọn biến thể mượt mà với hiệu ứng mờ kính và đồng bộ hóa dữ liệu thời gian thực.
+
+## 🌟 Cập Nhật Trước Đó (03/04/2026)
 
 - 🧠 **Smart AI Content Engine**: Nâng cấp hệ thống AI có khả năng "tự nhận diện" loại sản phẩm qua tên gọi (RAM, SSD, Laptop, Watch...) để tự động tạo mô tả và kỹ thuật review chính xác 100% với thông số cấu hình.
 - 🔍 **Advanced Filtering System**: Triển khai bộ lọc đa tầng (Multi-criteria) cho phép lọc sản phẩm theo Brand, Category, và trạng thái chi tiết (Đang bán, Đang ẩn, Hết hàng, Còn hàng).
@@ -326,6 +334,6 @@ MIT License - xem file [LICENSE](LICENSE)
 
 ---
 
-**Last Updated**: April 03, 2026
-**Status**: Active Development - Advanced AI & Inventory Optimization
-**Recent Features**: Smart AI Engine (Spec-aware), Advanced Filtering, Dynamic Variants, Status/Stock Visibility.
+**Last Updated**: April 04, 2026
+**Status**: Active Development - **Premium Storefront & Data Synchronization**
+**Recent Features**: Luxury Redesign, Image LCP Fixes, Data-driven Specs, Dynamic Variant Labeling.

@@ -15,11 +15,11 @@ export async function PATCH(
     const manualId = url.pathname.split('/').pop();
     const id = (routeId && routeId !== "undefined") ? routeId : manualId;
 
-    const json = await request.json();
+    const body = await request.json();
     const { 
       name, slug, description, details, base_price, original_price, images, 
-      brand_id, category, specs, variants 
-    } = json;
+      brand_id, category, specs, variants, is_active, is_featured
+    } = body;
 
     if (!id || id === "undefined") {
       return NextResponse.json({ error: "No valid ID found" }, { status: 400 });
@@ -38,6 +38,8 @@ export async function PATCH(
         brand_id,
         category, // Trực tiếp lưu giá trị Enum
         specs: specs || {},
+        is_active: is_active !== undefined ? is_active : true,
+        is_featured: is_featured !== undefined ? is_featured : false,
         variants: {
           deleteMany: {}, // Đồng bộ danh sách biến thể
           create: variants.map((v: any) => ({

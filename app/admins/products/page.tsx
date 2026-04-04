@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Search, MoreVertical, Edit, Trash2, Package, Globe, Tag, Layers, AlertCircle, Loader2, Coins, Archive, Smartphone, Laptop, Tablet, Headphones, Watch, Cpu, Sparkles, Upload, Eye, Activity, CheckCircle2, ShieldCheck, Check } from "lucide-react";
+import { Plus, Search, MoreVertical, Edit, Trash2, Package, Globe, Tag, Layers, AlertCircle, Loader2, Coins, Archive, Smartphone, Laptop, Tablet, Headphones, Watch, Cpu, Sparkles, Upload, Eye, Activity, CheckCircle2, ShieldCheck, Check, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useLanguage } from "@/app/context/language-context";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Metadata } from "next";
 
 interface Brand {
   id: string;
@@ -50,6 +51,7 @@ interface Product {
   category: string;
   specs?: Record<string, string>;
   is_active: boolean;
+  is_featured: boolean;
   brand: Brand;
   variants: Variant[];
 }
@@ -129,6 +131,7 @@ export default function ProductsPage() {
     category: "SMARTPHONE",
     specs: {} as Record<string, string>,
     is_active: true,
+    is_featured: false,
     variants: [{
       name: "", sku: "", price: "", original_price: "", stock: "0",
       color: "", storage: "", ram: "", specs: {}, images: []
@@ -190,15 +193,15 @@ export default function ProductsPage() {
     const list = [...formData.variants];
     const category = formData.category || "OTHER";
     const config = VARIANT_FIELD_CONFIG[category] || VARIANT_FIELD_CONFIG.OTHER;
-    
+
     // Update core fields or specs
     const coreFields = ['storage', 'ram', 'color', 'price', 'original_price', 'stock', 'sku', 'name'];
     if (coreFields.includes(field)) {
       list[index] = { ...list[index], [field as keyof Variant]: value };
     } else {
-      list[index] = { 
-        ...list[index], 
-        specs: { ...(list[index].specs || {}), [field]: value } 
+      list[index] = {
+        ...list[index],
+        specs: { ...(list[index].specs || {}), [field]: value }
       };
     }
 
@@ -237,8 +240,8 @@ export default function ProductsPage() {
 
       if (res.ok) {
         toast.success(isEditMode ? "Cập nhật sản phẩm thành công!" : "Tạo sản phẩm thành công!", {
-          description: isEditMode 
-            ? `Dữ liệu sản phẩm "${formData.name}" đã được đồng bộ hóa.` 
+          description: isEditMode
+            ? `Dữ liệu sản phẩm "${formData.name}" đã được đồng bộ hóa.`
             : `Sản phẩm "${formData.name}" đã sẵn sàng trên hệ thống.`,
           icon: <Package size={18} className="text-emerald-500" />,
         });
@@ -302,6 +305,7 @@ export default function ProductsPage() {
       brand_id: product.brand_id,
       category: (product as any).category || "SMARTPHONE",
       is_active: product.is_active,
+      is_featured: product.is_featured,
       specs: product.specs || {},
       variants: product.variants.map(v => ({
         ...v,
@@ -334,14 +338,14 @@ export default function ProductsPage() {
 
   const filteredProducts = products.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          p.brand?.name.toLowerCase().includes(searchQuery.toLowerCase());
+      p.brand?.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = filterCategory === "ALL" || (p as any).category === filterCategory;
     const matchesBrand = filterBrand === "ALL" || p.brand_id === filterBrand;
-    
+
     let matchesStatus = true;
     if (filterStatus === "ACTIVE") matchesStatus = p.is_active;
     if (filterStatus === "INACTIVE") matchesStatus = !p.is_active;
-    
+
     // Check total stock for variant-level filtering
     const totalStock = p.variants?.reduce((sum, v) => sum + Number(v.stock), 0) || 0;
     if (filterStatus === "IN_STOCK") matchesStatus = totalStock > 0;
@@ -475,6 +479,7 @@ export default function ProductsPage() {
     }
   };
 
+
   return (
     <div className="p-6 sm:p-10 space-y-8 animate-in fade-in duration-700">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
@@ -572,96 +577,99 @@ export default function ProductsPage() {
         ) : filteredProducts.map((product) => {
           const totalStock = product.variants?.reduce((sum, v) => sum + Number(v.stock), 0) || 0;
           return (
-          <div key={product.id} className="group relative bg-white dark:bg-[#0A0A0B] border border-slate-200 dark:border-white/10 rounded-[32px] overflow-hidden hover:shadow-2xl hover:shadow-indigo-500/10 hover:-translate-y-2 transition-all duration-500">
-            <div className="aspect-[4/3] bg-slate-100 dark:bg-white/5 relative overflow-hidden">
-              {product.images[0] ? (
-                <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-slate-300">
-                  <Smartphone size={48} />
-                </div>
-              )}
-              
-              {/* Top Icons Layer */}
-              <div className="absolute top-4 inset-x-4 flex justify-between items-start pointer-events-none">
-                <div className="flex flex-col gap-2 pointer-events-auto">
-                  {product.original_price && product.original_price > product.base_price && (
-                    <div className="bg-rose-500 text-white px-3 py-1.5 rounded-full text-[10px] font-black shadow-xl shadow-rose-500/20 z-10 animate-in zoom-in duration-300">
-                      -{Math.round(((product.original_price - product.base_price) / product.original_price) * 100)}%
-                    </div>
-                  )}
-                  <Badge className="bg-white/90 dark:bg-black/60 backdrop-blur-md text-slate-900 dark:text-white border-0 font-bold px-3 py-1 rounded-full text-[10px] uppercase tracking-wider w-fit">
-                    {product.brand?.name || "No Brand"}
-                  </Badge>
-                </div>
-
-                <div className="flex flex-col gap-2 items-end pointer-events-auto">
-                  <Badge className={`border-0 font-black px-3 py-1.5 rounded-full text-[9px] uppercase tracking-[0.1em] shadow-lg ${
-                    product.is_active 
-                      ? "bg-emerald-500 text-white shadow-emerald-500/20" 
-                      : "bg-slate-400 text-white"
-                  }`}>
-                    {product.is_active ? "Selling" : "Hidden"}
-                  </Badge>
-                  <Badge className={`border-0 font-black px-3 py-1.5 rounded-full text-[9px] uppercase tracking-[0.1em] shadow-lg ${
-                    totalStock > 0 
-                      ? "bg-indigo-600 text-white shadow-indigo-500/20" 
-                      : "bg-rose-600 text-white shadow-rose-500/20"
-                  }`}>
-                    {totalStock > 0 ? `In Stock (${totalStock})` : "Out of Stock"}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-6 space-y-4">
-              <div className="space-y-1">
-                <div className="text-[10px] uppercase font-black tracking-widest text-indigo-500">
-                  {t((product as any).category)}
-                </div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white truncate">{product.name}</h3>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="text-xl font-black text-slate-900 dark:text-white">
-                    {product.base_price.toLocaleString()} VND
+            <div key={product.id} className="group relative bg-white dark:bg-[#0A0A0B] border border-slate-200 dark:border-white/10 rounded-[32px] overflow-hidden hover:shadow-2xl hover:shadow-indigo-500/10 hover:-translate-y-2 transition-all duration-500">
+              <div className="aspect-[4/3] bg-slate-100 dark:bg-white/5 relative overflow-hidden">
+                {product.images[0] ? (
+                  <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-slate-300">
+                    <Smartphone size={48} />
                   </div>
-                  {product.original_price && product.original_price > product.base_price && (
-                    <div className="text-sm font-bold text-slate-400 line-through decoration-rose-500/50">
-                      {product.original_price.toLocaleString()} VND
-                    </div>
-                  )}
-                </div>
-                <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] bg-slate-50 dark:bg-white/5 px-2.5 py-1 rounded-full border border-slate-100 dark:border-white/5">
-                  {product.variants?.length || 0} {t("variantTitle")}s
+                )}
+
+                {/* Top Icons Layer */}
+                <div className="absolute top-4 inset-x-4 flex justify-between items-start pointer-events-none">
+                  <div className="flex flex-col gap-2 pointer-events-auto">
+                    {product.original_price && product.original_price > product.base_price && (
+                      <div className="bg-rose-500 text-white px-3 py-1.5 rounded-full text-[10px] font-black shadow-xl shadow-rose-500/20 z-10 animate-in zoom-in duration-300">
+                        -{Math.round(((product.original_price - product.base_price) / product.original_price) * 100)}%
+                      </div>
+                    )}
+                    <Badge className="bg-white/90 dark:bg-black/60 backdrop-blur-md text-slate-900 dark:text-white border-0 font-bold px-3 py-1 rounded-full text-[10px] uppercase tracking-wider w-fit">
+                      {product.brand?.name || "No Brand"}
+                    </Badge>
+                  </div>
+
+                  <div className="flex flex-col gap-2 items-end pointer-events-auto">
+                    <Badge className={`border-0 font-black px-3 py-1.5 rounded-full text-[9px] uppercase tracking-[0.1em] shadow-lg ${product.is_active
+                      ? "bg-emerald-500 text-white shadow-emerald-500/20"
+                      : "bg-slate-400 text-white"
+                      }`}>
+                      {product.is_active ? "Selling" : "Hidden"}
+                    </Badge>
+                    {product.is_featured && (
+                      <Badge className="bg-indigo-600 text-white border-0 font-black px-3 py-1.5 rounded-full text-[9px] uppercase tracking-[0.1em] shadow-lg shadow-indigo-500/20 animate-pulse">
+                        Featured
+                      </Badge>
+                    )}
+                    <Badge className={`border-0 font-black px-3 py-1.5 rounded-full text-[9px] uppercase tracking-[0.1em] shadow-lg ${totalStock > 0
+                      ? "bg-indigo-600 text-white shadow-indigo-500/20"
+                      : "bg-rose-600 text-white shadow-rose-500/20"
+                      }`}>
+                      {totalStock > 0 ? `In Stock (${totalStock})` : "Out of Stock"}
+                    </Badge>
+                  </div>
                 </div>
               </div>
 
-              <div className="pt-4 flex items-center gap-2 border-t border-slate-100 dark:border-white/5">
-                <Button
-                  onClick={() => { setPreviewProduct(product); setIsPreviewOpen(true); }}
-                  variant="ghost"
-                  className="h-11 w-11 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 p-0 transition-all"
-                >
-                  <Eye size={18} />
-                </Button>
-                <Button
-                  onClick={() => openEdit(product)}
-                  className="flex-1 h-11 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-900 dark:text-white font-bold text-xs gap-2 transition-all"
-                >
-                  <Edit size={16} /> {t("edit")}
-                </Button>
-                <Button
-                  onClick={() => handleDelete(product.id, product.name)}
-                  variant="ghost"
-                  className="h-11 w-11 rounded-xl bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 p-0 transition-all"
-                >
-                  <Trash2 size={18} />
-                </Button>
+              <div className="p-6 space-y-4">
+                <div className="space-y-1">
+                  <div className="text-[10px] uppercase font-black tracking-widest text-indigo-500">
+                    {t((product as any).category)}
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white truncate">{product.name}</h3>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="text-xl font-black text-slate-900 dark:text-white">
+                      {product.base_price.toLocaleString()} VND
+                    </div>
+                    {product.original_price && product.original_price > product.base_price && (
+                      <div className="text-sm font-bold text-slate-400 line-through decoration-rose-500/50">
+                        {product.original_price.toLocaleString()} VND
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] bg-slate-50 dark:bg-white/5 px-2.5 py-1 rounded-full border border-slate-100 dark:border-white/5">
+                    {product.variants?.length || 0} {t("variantTitle")}s
+                  </div>
+                </div>
+
+                <div className="pt-4 flex items-center gap-2 border-t border-slate-100 dark:border-white/5">
+                  <Button
+                    onClick={() => { setPreviewProduct(product); setIsPreviewOpen(true); }}
+                    variant="ghost"
+                    className="h-11 w-11 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 p-0 transition-all"
+                  >
+                    <Eye size={18} />
+                  </Button>
+                  <Button
+                    onClick={() => openEdit(product)}
+                    className="flex-1 h-11 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-900 dark:text-white font-bold text-xs gap-2 transition-all"
+                  >
+                    <Edit size={16} /> {t("edit")}
+                  </Button>
+                  <Button
+                    onClick={() => handleDelete(product.id, product.name)}
+                    variant="ghost"
+                    className="h-11 w-11 rounded-xl bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 p-0 transition-all"
+                  >
+                    <Trash2 size={18} />
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
           );
         })}
       </div>
@@ -828,66 +836,93 @@ export default function ProductsPage() {
                 </div>
               </div>
 
-                  {/* Row 3: Description & Status */}
-                  <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                    <div className="lg:col-span-3 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <Label className="uppercase text-[10px] font-black tracking-widest text-slate-500 flex items-center gap-2">
-                          <Edit size={12} className="text-indigo-500" /> {t("description")}
-                        </Label>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          onClick={() => handleGenerateAI('description')}
-                          disabled={isGeneratingAI || !formData.name}
-                          className="h-7 px-3 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all gap-1.5 border border-indigo-100 dark:border-indigo-500/20"
-                        >
-                          {isGeneratingAI ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
-                          {isGeneratingAI ? "AI Writing..." : t("autoWriteAI")}
-                        </Button>
-                      </div>
-                      <textarea
-                        value={formData.description}
-                        onChange={e => setFormData({ ...formData, description: e.target.value })}
-                        className="w-full h-32 p-4 rounded-2xl bg-slate-50/50 dark:bg-white/[0.02] border-slate-100 dark:border-white/10 focus:ring-4 focus:ring-indigo-500/10 font-medium text-sm outline-none transition-all resize-none shadow-inner"
-                        placeholder="Summarize the core value proposition of this product..."
-                      />
-                    </div>
-
-                    <div className="lg:col-span-1 space-y-3">
-                      <Label className="uppercase text-[10px] font-black tracking-widest text-slate-500 flex items-center gap-2">
-                        <Activity size={12} className="text-indigo-500" /> {t("productStatus") || "Product Status"}
-                      </Label>
-                      <Select 
-                        value={formData.is_active ? "ACTIVE" : "INACTIVE"} 
-                        onValueChange={(v) => setFormData({ ...formData, is_active: v === "ACTIVE" })}
-                      >
-                        <SelectTrigger className={`h-24 rounded-[32px] border transition-all flex flex-col items-center justify-center gap-2 ${
-                          formData.is_active 
-                            ? "bg-emerald-50 dark:bg-emerald-500/5 border-emerald-100 dark:border-emerald-500/20" 
-                            : "bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10"
-                        }`}>
-                          <div className="flex items-center gap-3">
-                            <div className={`h-3 w-3 rounded-full animate-pulse ${formData.is_active ? "bg-emerald-500" : "bg-slate-400"}`} />
-                            <span className={`text-xs font-black uppercase tracking-widest ${
-                              formData.is_active ? "text-emerald-600" : "text-slate-400"
-                            }`}>
-                              {formData.is_active ? "Selling" : "Hidden"}
-                            </span>
-                          </div>
-                          <p className="text-[9px] font-bold text-slate-400 text-center px-4 leading-tight">
-                            {formData.is_active 
-                              ? "Visible to customers" 
-                              : "Hidden from store"}
-                          </p>
-                        </SelectTrigger>
-                        <SelectContent className="rounded-2xl border-slate-100 dark:border-white/10 shadow-2xl">
-                          <SelectItem value="ACTIVE" className="font-bold text-emerald-500">SELLING (ACTIVE)</SelectItem>
-                          <SelectItem value="INACTIVE" className="font-bold text-slate-400">HIDDEN (INACTIVE)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+              {/* Row 3: Description & Status */}
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <div className="lg:col-span-3 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label className="uppercase text-[10px] font-black tracking-widest text-slate-500 flex items-center gap-2">
+                      <Edit size={12} className="text-indigo-500" /> {t("description")}
+                    </Label>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => handleGenerateAI('description')}
+                      disabled={isGeneratingAI || !formData.name}
+                      className="h-7 px-3 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all gap-1.5 border border-indigo-100 dark:border-indigo-500/20"
+                    >
+                      {isGeneratingAI ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
+                      {isGeneratingAI ? "AI Writing..." : t("autoWriteAI")}
+                    </Button>
                   </div>
+                  <textarea
+                    value={formData.description}
+                    onChange={e => setFormData({ ...formData, description: e.target.value })}
+                    className="w-full h-32 p-4 rounded-2xl bg-slate-50/50 dark:bg-white/[0.02] border-slate-100 dark:border-white/10 focus:ring-4 focus:ring-indigo-500/10 font-medium text-sm outline-none transition-all resize-none shadow-inner"
+                    placeholder="Summarize the core value proposition of this product..."
+                  />
+                </div>
+
+                <div className="lg:col-span-1 space-y-3">
+                  <Label className="uppercase text-[10px] font-black tracking-widest text-slate-500 flex items-center gap-2">
+                    <Activity size={12} className="text-indigo-500" /> {t("productStatus") || "Product Status"}
+                  </Label>
+                  <Select
+                    value={formData.is_active ? "ACTIVE" : "INACTIVE"}
+                    onValueChange={(v) => setFormData({ ...formData, is_active: v === "ACTIVE" })}
+                  >
+                    <SelectTrigger className={`h-16 w-full rounded-2xl border transition-all px-4 ${formData.is_active
+                      ? "bg-emerald-50 dark:bg-emerald-500/5 border-emerald-200 dark:border-emerald-500/20"
+                      : "bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10"
+                      }`}>
+                      <div className="flex items-center gap-3 w-full text-left">
+                        <div className={`h-3 w-3 rounded-full shrink-0 ${formData.is_active ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" : "bg-slate-400"}`} />
+                        <div className="flex flex-col leading-tight">
+                          <span className={`text-[10px] font-black uppercase tracking-widest ${formData.is_active ? "text-emerald-600" : "text-slate-400"
+                            }`}>
+                            {formData.is_active ? "Selling" : "Hidden"}
+                          </span>
+                          <span className="text-[9px] font-bold text-slate-400 opacity-60">Store visibility</span>
+                        </div>
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent className="rounded-2xl border-slate-100 dark:border-white/10 shadow-2xl z-50">
+                      <SelectItem value="ACTIVE" className="font-bold text-emerald-500 py-3">SELLING (ACTIVE)</SelectItem>
+                      <SelectItem value="INACTIVE" className="font-bold text-slate-400 py-3">HIDDEN (INACTIVE)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-4">
+                  <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
+                    <Star size={14} className="text-amber-500" />
+                    Tiêu Điểm (Featured)
+                  </Label>
+                  <Select
+                    value={formData.is_featured ? "YES" : "NO"}
+                    onValueChange={(v) => setFormData({ ...formData, is_featured: v === "YES" })}
+                  >
+                    <SelectTrigger className={`h-16 w-full rounded-2xl border transition-all px-4 ${formData.is_featured
+                      ? "bg-amber-50 dark:bg-amber-500/5 border-amber-200 dark:border-amber-500/30"
+                      : "bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10"
+                      }`}>
+                      <div className="flex items-center gap-3 w-full text-left">
+                        <Star size={16} className={formData.is_featured ? "text-amber-500 fill-amber-500" : "text-slate-400"} />
+                        <div className="flex flex-col leading-tight">
+                          <span className={`text-[10px] font-black uppercase tracking-widest ${formData.is_featured ? "text-amber-600" : "text-slate-400"
+                            }`}>
+                            {formData.is_featured ? "Featured" : "Regular"}
+                          </span>
+                          <span className="text-[9px] font-bold text-slate-400 opacity-60">Landing highlights</span>
+                        </div>
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent className="rounded-2xl border-slate-100 dark:border-white/10 shadow-2xl z-50">
+                      <SelectItem value="YES" className="font-bold text-amber-500 py-3">YES, FEATURE THIS</SelectItem>
+                      <SelectItem value="NO" className="font-bold text-slate-400 py-3">NO, REGULAR ITEM</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </div>
 
             <div className="space-y-6">
@@ -908,9 +943,9 @@ export default function ProductsPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div className="col-span-full py-6 text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] opacity-50 border-2 border-dashed border-slate-50 dark:border-white/5 rounded-[24px]">
-                    {t("noSpecsAdded")}
-                  </div>
+                <div className="col-span-full py-6 text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] opacity-50 border-2 border-dashed border-slate-50 dark:border-white/5 rounded-[24px]">
+                  {t("noSpecsAdded")}
+                </div>
                 {Object.entries(formData.specs).map(([key, value], idx) => (
                   <div key={idx} className="group relative flex items-center gap-3 bg-slate-50/50 dark:bg-white/[0.02] p-4 rounded-[24px] border border-slate-100 dark:border-white/5 hover:border-indigo-500/30 transition-all shadow-sm shadow-indigo-500/5">
                     <div className="flex-1 space-y-1">
@@ -1097,11 +1132,10 @@ export default function ProductsPage() {
                       )}
                     </div>
 
-                    <div className={`grid gap-4 ${
-                      (VARIANT_FIELD_CONFIG[formData.category] || VARIANT_FIELD_CONFIG.OTHER).length > 2 
-                        ? "grid-cols-2 md:grid-cols-3" 
-                        : "grid-cols-2"
-                    }`}>
+                    <div className={`grid gap-4 ${(VARIANT_FIELD_CONFIG[formData.category] || VARIANT_FIELD_CONFIG.OTHER).length > 2
+                      ? "grid-cols-2 md:grid-cols-3"
+                      : "grid-cols-2"
+                      }`}>
                       {(VARIANT_FIELD_CONFIG[formData.category] || VARIANT_FIELD_CONFIG.OTHER).map((f) => (
                         <div key={f.key} className="space-y-2">
                           <Label className="text-[10px] font-black uppercase text-slate-400">
@@ -1201,8 +1235,8 @@ export default function ProductsPage() {
                 type="submit"
                 disabled={formLoading}
                 className={`w-full h-16 rounded-3xl text-white shadow-2xl text-lg font-black uppercase tracking-widest disabled:opacity-50 transition-all flex items-center justify-center gap-3 ${isEditMode
-                    ? "bg-gradient-to-r from-emerald-600 to-teal-700 shadow-emerald-500/20"
-                    : "bg-gradient-to-r from-indigo-600 to-purple-700 shadow-indigo-500/20"
+                  ? "bg-gradient-to-r from-emerald-600 to-teal-700 shadow-emerald-500/20"
+                  : "bg-gradient-to-r from-indigo-600 to-purple-700 shadow-indigo-500/20"
                   }`}
               >
                 {formLoading ? (

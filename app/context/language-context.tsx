@@ -131,7 +131,25 @@ const translations: Translations = {
   deleteWarning: { en: "You are about to delete", vi: "Bạn đang chuẩn bị xóa định danh" },
   undoneWarning: { en: "This action cannot be undone.", vi: "Hành động này không thể hoàn tác." },
   confirmDelete: { en: "CONFIRM DELETE", vi: "XÁC NHẬN XÓA BỎ" },
-  goBack: { en: "GO BACK", vi: "QUAY LẠI" }
+  goBack: { en: "GO BACK", vi: "QUAY LẠI" },
+
+  // Storefront Translations
+  shopNow: { en: "Shop Now", vi: "Mua Sắm Ngay" },
+  viewVideo: { en: "Watch Video", vi: "Xem Video" },
+  newArrivals: { en: "New Arrivals", vi: "Sản phẩm mới" },
+  featuredCollection: { en: "Featured Collection", vi: "Bộ sưu tập tiêu điểm" },
+  exploreCategories: { en: "Explore Categories", vi: "Khám phá danh mục" },
+  elevateLife: { en: "Elevate Your Digital Life", vi: "Nâng tầm cuộc sống kỹ thuật số" },
+  heroSubtitle: { en: "FlashTech brings the most advanced devices, carefully selected to maximize your work and lifestyle.", vi: "FlashTech mang đến những thiết bị tối tân nhất, được tuyển chọn kỹ lưỡng để hỗ trợ tối đa cho công việc và phong cách sống của bạn." },
+  customersActive: { en: "Active Customers", vi: "Khách hàng" },
+  satisfactionRate: { en: "Satisfaction Rate", vi: "Hài lòng" },
+  fastDelivery: { en: "Fast Delivery", vi: "Giao hàng nhanh" },
+  home: { en: "Home", vi: "Trang chủ" },
+  viewDetails: { en: "View Details", vi: "Xem chi tiết" },
+  subscribeNewsletter: { en: "Ready for a tech leap?", vi: "Sẵn sàng cho bước nhảy vọt về công nghệ?" },
+  subscribeSubtitle: { en: "Subscribe to our newsletter to never miss exclusive deals and limited product announcements.", vi: "Đăng ký nhận bản tin để không bỏ lỡ những đợt giảm giá độc quyền và thông báo về các sản phẩm giới hạn." },
+  enterEmail: { en: "Your email address", vi: "Địa chỉ email của bạn" },
+  subscribeBtn: { en: "Subscribe Now", vi: "Đăng Ký Ngay" }
 };
 
 interface LanguageContextType {

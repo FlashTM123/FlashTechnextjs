@@ -14,8 +14,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "FlashTech - Hệ thống quản trị Premium",
-  description: "Trình quản lý dữ liệu tập trung thế hệ mới của FlashTech",
+  title: "FlashTech - Siêu thị Công nghệ & Phụ kiện cao cấp",
+  description: "Trải nghiệm mua sắm thiết bị công nghệ đỉnh cao và hiện đại nhất tại FlashTech",
 };
 
 export default function RootLayout({
