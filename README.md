@@ -7,7 +7,7 @@ Một nền tảng quản lý thương mại điện tử chuyên nghiệp đư�
 - 📊 **Real-time Business Intelligence**: Chuyển đổi toàn bộ Dashboard sang dữ liệu thực từ Prisma. Tự động tính toán **Tổng doanh thu**, **Số lượng đơn hàng hoạt động** và **Tổng sản phẩm/người dùng**.
 - 📈 **Growth & Conversion Tracking**: Triển khai logic so sánh tăng trưởng khách hàng theo chu kỳ 30 ngày và tính toán tỷ lệ chuyển đổi (Conversion Rate) chính xác.
 - 🕒 **Operational Live Feed**: Thay thế logs tĩnh bằng luồng sự kiện thực tế (Đơn hàng mới, Khách hàng mới) kèm thời gian tương đối chuẩn hóa qua `date-fns` (vi-VN locale).
-- 💼 **Professional Hub Redesign**: Chuẩn hóa thuật ngữ từ sci-fi sang phong cách quản trị thương mại chuyên nghiệp. Kết nối trực tiếp các giao dịch trên Dashboard với trang chi tiết đơn hàng.
+- 💼 **Professional Hub Redesign**: Chuẩn hóa thuật ngữ từ sci-fi sang phong cách quản trị thương mại chuyên nghiệp. Kết nối trực tiếp các giao dịch trên Dashboard với trang chi tiết đơn hàng. 
 
 ## 🌟 Cập Nhật Trước Đó (04/04/2026)
 
