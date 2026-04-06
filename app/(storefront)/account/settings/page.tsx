@@ -49,7 +49,7 @@ export default function SettingsPage() {
         phone_number: customer.phone_number || "",
         address: customer.address || "",
         city: customer.city || "",
-        gender: (customer as any).gender || "HIDDEN",
+        gender: customer.gender || "HIDDEN",
         avatar: customer.avatar || ""
       });
     }

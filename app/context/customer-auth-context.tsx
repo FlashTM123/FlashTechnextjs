@@ -10,6 +10,8 @@ export interface Customer {
   full_name: string;
   phone_number?: string;
   address?: string;
+  city?: string;
+  gender?: string;
   avatar?: string;
   tier?: string;
   points?: number;
