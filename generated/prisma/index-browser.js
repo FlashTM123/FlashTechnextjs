@@ -198,6 +198,33 @@ exports.Prisma.ProductVariantScalarFieldEnum = {
   updated_at: 'updated_at'
 };
 
+exports.Prisma.OrderScalarFieldEnum = {
+  id: 'id',
+  order_number: 'order_number',
+  customer_id: 'customer_id',
+  total_amount: 'total_amount',
+  status: 'status',
+  shipping_address: 'shipping_address',
+  phone_number: 'phone_number',
+  full_name: 'full_name',
+  payment_method: 'payment_method',
+  payment_status: 'payment_status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.OrderItemScalarFieldEnum = {
+  id: 'id',
+  order_id: 'order_id',
+  product_id: 'product_id',
+  product_variant_id: 'product_variant_id',
+  name: 'name',
+  variant_name: 'variant_name',
+  image: 'image',
+  quantity: 'quantity',
+  price: 'price'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -246,12 +273,23 @@ exports.CategoryType = exports.$Enums.CategoryType = {
   OTHER: 'OTHER'
 };
 
+exports.OrderStatus = exports.$Enums.OrderStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  SHIPPING: 'SHIPPING',
+  DELIVERED: 'DELIVERED',
+  CANCELLED: 'CANCELLED',
+  RETURNED: 'RETURNED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Customer: 'Customer',
   Brands: 'Brands',
   Product: 'Product',
-  ProductVariant: 'ProductVariant'
+  ProductVariant: 'ProductVariant',
+  Order: 'Order',
+  OrderItem: 'OrderItem'
 };
 
 /**

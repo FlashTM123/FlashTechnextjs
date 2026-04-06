@@ -58,7 +58,7 @@ function NavSidebar() {
 
   const handleLogout = () => {
     logout();
-    router.push("/login");
+    router.push("/admins/login");
   };
 
   return (
@@ -170,7 +170,7 @@ export default function AdminLayout({
   useEffect(() => {
     if (isInitialized && !isAuthChecked) {
       if (!user) {
-        router.push("/login");
+        router.push("/admins/login");
       }
       setIsAuthChecked(true);
     }
@@ -178,7 +178,7 @@ export default function AdminLayout({
 
   const handleLogout = () => {
     logout();
-    router.push("/login");
+    router.push("/admins/login");
   };
 
   if (!isAuthChecked || !isInitialized) {

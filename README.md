@@ -2,13 +2,14 @@
 
 Một nền tảng quản lý thương mại điện tử chuyên nghiệp được xây dựng bằng **Next.js 16**, **React 19**, **TypeScript**, **Tailwind CSS 4**, và **Shadcn/ui**.
 
-## 🌟 Mới Nhất: Luxury Storefront Redesign & Data Sync (04/04/2026)
+## 🌟 Mới Nhất: Data-Driven Commerce Hub & Real-time Analytics (06/04/2026)
 
-- 🎨 **Luxury Minimalist Product Detail**: Đại tu toàn diện trang chi tiết sản phẩm theo phong cách tối giản sang trọng. Tối ưu hóa phân cấp thị giác, sử dụng khoảng trắng thông minh và typography chuyên nghiệp.
-- ⚡ **Next.js Image Performance**: Tối ưu hóa 100% hiệu năng hình ảnh với thuộc tính `sizes`, `priority` (LCP) và xử lý triệt để các cảnh báo về `position` trong console.
-- 📊 **Data-Driven Specifications**: Tích hợp sâu thông số kỹ thuật từ Database (JSON). Hệ thống tự động trích xuất **"Cấu hình nổi bật"** ngay tại phần mua hàng và có cơ chế fallback thông minh.
-- 🏷️ **Dynamic Variant Labeling**: Sửa lỗi hiển thị cấu hình cho các sản phẩm không có thuộc tính Color/Storage (như RAM, phụ kiện), tự động nhận diện nhãn từ tên phiên bản.
-- 🛒 **Premium Purchase Experience**: Nâng cấp Sticky Buy Bar và hệ thống chọn biến thể mượt mà với hiệu ứng mờ kính và đồng bộ hóa dữ liệu thời gian thực.
+- 📊 **Real-time Business Intelligence**: Chuyển đổi toàn bộ Dashboard sang dữ liệu thực từ Prisma. Tự động tính toán **Tổng doanh thu**, **Số lượng đơn hàng hoạt động** và **Tổng sản phẩm/người dùng**.
+- 📈 **Growth & Conversion Tracking**: Triển khai logic so sánh tăng trưởng khách hàng theo chu kỳ 30 ngày và tính toán tỷ lệ chuyển đổi (Conversion Rate) chính xác.
+- 🕒 **Operational Live Feed**: Thay thế logs tĩnh bằng luồng sự kiện thực tế (Đơn hàng mới, Khách hàng mới) kèm thời gian tương đối chuẩn hóa qua `date-fns` (vi-VN locale).
+- 💼 **Professional Hub Redesign**: Chuẩn hóa thuật ngữ từ sci-fi sang phong cách quản trị thương mại chuyên nghiệp. Kết nối trực tiếp các giao dịch trên Dashboard với trang chi tiết đơn hàng.
+
+## 🌟 Cập Nhật Trước Đó (04/04/2026)
 
 ## 🌟 Cập Nhật Trước Đó (03/04/2026)
 
@@ -334,6 +335,6 @@ MIT License - xem file [LICENSE](LICENSE)
 
 ---
 
-**Last Updated**: April 04, 2026
-**Status**: Active Development - **Premium Storefront & Data Synchronization**
-**Recent Features**: Luxury Redesign, Image LCP Fixes, Data-driven Specs, Dynamic Variant Labeling.
+**Last Updated**: April 06, 2026
+**Status**: Active Development - **Data-Driven Commerce Hub & Real-time Analytics**
+**Recent Features**: Real-time Revenue Tracking, Customer Growth Analytics, Operational Live Feed, Professional Hub Redesign.

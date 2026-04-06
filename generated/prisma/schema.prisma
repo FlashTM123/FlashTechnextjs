@@ -90,6 +90,8 @@ model Customer {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  orders Order[]
+
   @@map("customer")
 }
 
@@ -168,4 +170,57 @@ model ProductVariant {
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+}
+
+enum OrderStatus {
+  PENDING // Chờ xác nhận
+  CONFIRMED // Đã xác nhận
+  SHIPPING // Đang giao hàng
+  DELIVERED // Đã giao hàng
+  CANCELLED // Đã hủy
+  RETURNED // Trả hàng
+}
+
+model Order {
+  id           String @id @default(auto()) @map("_id") @db.ObjectId
+  order_number String @unique // Ví dụ: FT-100424-XYZ
+
+  customer_id String   @db.ObjectId
+  customer    Customer @relation(fields: [customer_id], references: [id])
+
+  items OrderItem[]
+
+  total_amount Float
+  status       OrderStatus @default(PENDING)
+
+  // Thông tin giao hàng
+  shipping_address String
+  phone_number     String
+  full_name        String
+
+  payment_method String @default("COD") // COD, VNPAY, etc.
+  payment_status String @default("UNPAID") // UNPAID, PAID
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  order_id String @db.ObjectId
+  order    Order  @relation(fields: [order_id], references: [id], onDelete: Cascade)
+
+  product_id         String  @db.ObjectId
+  product_variant_id String? @db.ObjectId
+
+  name         String // Lưu tên tại thời điểm mua (đề phòng sản phẩm đổi tên)
+  variant_name String?
+  image        String?
+
+  quantity Int
+  price    Float // Lưu giá tại thời điểm mua
+
+  @@map("order_items")
 }

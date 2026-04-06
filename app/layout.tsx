@@ -4,9 +4,10 @@ import "./globals.css";
 import { AuthProvider } from "./context/auth-context";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "./context/language-context";
+import { CustomerAuthProvider } from "./context/customer-auth-context";
 import { Toaster } from "sonner";
 
-const inter = Inter({
+export const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin", "vietnamese"],
   weight: ['400', '500', '600', '700', '800', '900'],
@@ -17,6 +18,8 @@ export const metadata: Metadata = {
   title: "FlashTech - Siêu thị Công nghệ & Phụ kiện cao cấp",
   description: "Trải nghiệm mua sắm thiết bị công nghệ đỉnh cao và hiện đại nhất tại FlashTech",
 };
+
+import { CartProvider } from "./context/cart-context";
 
 export default function RootLayout({
   children,
@@ -29,8 +32,12 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <LanguageProvider>
             <AuthProvider>
-              {children}
-              <Toaster position="top-right" richColors />
+              <CustomerAuthProvider>
+                <CartProvider>
+                  {children}
+                  <Toaster position="top-right" richColors />
+                </CartProvider>
+              </CustomerAuthProvider>
             </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>

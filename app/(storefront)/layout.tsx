@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/storefront/navbar";
 import { Footer } from "@/components/storefront/footer";
+import { CustomerAuthProvider } from "@/app/context/customer-auth-context";
 
 export default function StorefrontLayout({
   children,

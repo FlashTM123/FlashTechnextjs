@@ -26,6 +26,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SpecsTable } from "./specs-table";
+import { useRouter } from "next/navigation";
+import { useCart, CartItem } from "@/app/context/cart-context";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -147,11 +149,32 @@ export function ProductDetails({ product }: ProductDetailsProps) {
     }).filter(h => h.value);
   }, [activeSpecs]);
 
+  const { addToCart } = useCart();
+  const router = useRouter();
+
   const handleAddToCart = () => {
-    toast.success("Thành công", {
-      description : `"${product.name}" đã vào giỏ hàng.`,
-      icon : <CheckCircle2 size={18} className="text-emerald-500" />
-    });
+    if (!selectedVariant && product.variants?.length > 0) {
+      toast.error("Vui lòng chọn phiên bản sản phẩm");
+      return;
+    }
+
+    const cartItem: CartItem = {
+      id: `${product.id}-${selectedVariant?.id || 'base'}`,
+      productId: product.id,
+      variantId: selectedVariant?.id || null,
+      name: product.name,
+      variantName: selectedVariant ? getVariantLabel(selectedVariant) : null,
+      image: activeImage,
+      price: currentPrice,
+      quantity: quantity
+    };
+
+    addToCart(cartItem);
+  };
+
+  const handleBuyNow = () => {
+    handleAddToCart();
+    router.push("/cart"); // Redirect to cart first to review, or /checkout directly
   };
 
   return (
@@ -381,7 +404,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                    <ShoppingCart size={18} className="mr-3" /> Thêm vào giỏ
                 </Button>
                 
-                <Button className="flex-1 h-14 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-xs uppercase tracking-widest hover:opacity-90 shadow-xl transition-all">
+                <Button onClick={handleBuyNow} className="flex-1 h-14 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-xs uppercase tracking-widest hover:opacity-90 shadow-xl transition-all">
                    Mua ngay <ArrowRight size={18} className="ml-3" />
                 </Button>
              </div>
