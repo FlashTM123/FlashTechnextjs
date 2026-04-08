@@ -4,6 +4,7 @@ import { ProductCard } from "./product-card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 interface ProductGridProps {
   title?: string;
@@ -40,10 +41,12 @@ export function ProductGrid({ title, subtitle, products, limit = 8 }: ProductGri
               </p>
             )}
           </div>
-          <Button variant="outline" className="h-12 px-8 rounded-full border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 font-bold text-sm transition-all hover:scale-105 active:scale-95 group">
-            Xem tất cả
-            <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
-          </Button>
+          <Link href="/products">
+            <Button variant="outline" className="h-12 px-8 rounded-full border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 font-bold text-sm transition-all hover:scale-105 active:scale-95 group">
+              Xem tất cả
+              <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </Link>
         </div>
 
         {displayProducts.length > 0 ? (

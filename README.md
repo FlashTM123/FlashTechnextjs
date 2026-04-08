@@ -1,13 +1,16 @@
-# FlashTech - Modern Admin Dashboard
+# FlashTech - Modern Admin Dashboard & Premium Storefront
 
-Một nền tảng quản lý thương mại điện tử chuyên nghiệp được xây dựng bằng **Next.js 16**, **React 19**, **TypeScript**, **Tailwind CSS 4**, và **Shadcn/ui**.
+Một nền tảng quản lý và trải nghiệm mua sắm thương mại điện tử chuyên nghiệp được xây dựng bằng **Next.js 16**, **React 19**, **TypeScript**, **Tailwind CSS 4**, và **Shadcn/ui**.
 
-## 🌟 Mới Nhất: Data-Driven Commerce Hub & Real-time Analytics (06/04/2026)
+## 🌟 Mới Nhất: Premium Global Search & Advanced Storefront Experience (08/04/2026)
 
-- 📊 **Real-time Business Intelligence**: Chuyển đổi toàn bộ Dashboard sang dữ liệu thực từ Prisma. Tự động tính toán **Tổng doanh thu**, **Số lượng đơn hàng hoạt động** và **Tổng sản phẩm/người dùng**.
-- 📈 **Growth & Conversion Tracking**: Triển khai logic so sánh tăng trưởng khách hàng theo chu kỳ 30 ngày và tính toán tỷ lệ chuyển đổi (Conversion Rate) chính xác.
-- 🕒 **Operational Live Feed**: Thay thế logs tĩnh bằng luồng sự kiện thực tế (Đơn hàng mới, Khách hàng mới) kèm thời gian tương đối chuẩn hóa qua `date-fns` (vi-VN locale).
-- 💼 **Professional Hub Redesign**: Chuẩn hóa thuật ngữ từ sci-fi sang phong cách quản trị thương mại chuyên nghiệp. Kết nối trực tiếp các giao dịch trên Dashboard với trang chi tiết đơn hàng. 
+- 🔍 **Professional Command-Palette Search**: Triển khai hệ thống tìm kiếm Global Search Overlay cao cấp. Hỗ trợ phím tắt `Cmd+K`, live search kết quả ngay khi gõ với ảnh sản phẩm và giá, tích hợp hiệu ứng Glassmorphism & Framer Motion.
+- 🛒 **Advanced Unified Catalog**: Xây dựng trang danh mục sản phẩm (`/products`) chuyên nghiệp với hệ thống lọc đa năng (Category, Brand, Price Range) đồng bộ trực tiếp với URL. Tích hợp thanh Sidebar tinh gọn trên cả Mobile và Desktop.
+- ⭐ **Trusted Review System**: Triển khai hệ thống đánh giá sản phẩm toàn diện. Tự động nhận diện và gắn nhãn **"Đã mua hàng" (Verified Purchase)** cho khách hàng đã nhận hàng trực tiếp từ dữ liệu Prisma.
+- 🔗 **Synchronized Navigation**: Đồng bộ hóa toàn bộ hệ thống điều hướng trên Navbar và Trang chủ để sử dụng cơ chế tìm kiếm và lọc mới, tạo trải nghiệm mua sắm liền mạch.
+- 🛠️ **UI/UX Fixes**: Giải quyết triệt để lỗi Hydration (nested buttons), fix lỗi thiếu component `textarea`, và tối ưu hóa kích cỡ Search Overlay cho trải nghiệm "professional" hơn.
+
+## 🌟 Cập Nhật Trước Đó: Data-Driven Commerce Hub (06/04/2026)
 
 ## 🌟 Cập Nhật Trước Đó (04/04/2026)
 
@@ -335,6 +338,6 @@ MIT License - xem file [LICENSE](LICENSE)
 
 ---
 
-**Last Updated**: April 06, 2026
-**Status**: Active Development - **Data-Driven Commerce Hub & Real-time Analytics**
-**Recent Features**: Real-time Revenue Tracking, Customer Growth Analytics, Operational Live Feed, Professional Hub Redesign.
+**Last Updated**: April 08, 2026
+**Status**: Active Development - **Premium Storefront & Global Search**
+**Recent Features**: Command-Palette Search (Cmd+K), Advanced Product Catalog, Verified Review System, Unified Storefront Navigation, Optimized UI/UX.

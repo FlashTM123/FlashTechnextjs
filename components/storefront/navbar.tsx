@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Search, ShoppingCart, User, Menu, X, Smartphone, Laptop, Tablet, Headphones, Sparkles, LogOut, Settings, Package, Heart } from "lucide-react";
+import { Search, ShoppingCart, User, Menu, X, Smartphone, Laptop, Tablet, Headphones, Sparkles, LogOut, Settings, Package, Heart, ChevronRight, Command } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -20,13 +21,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { SearchOverlay } from "./search-overlay";
 
 export function Navbar() {
+  const router = useRouter();
   const { t } = useLanguage();
   const { customer, logout } = useCustomerAuth();
   const { totalItems } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -34,11 +38,23 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Keyboard shortcut for search
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setIsSearchOpen((open) => !open);
+      }
+    };
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
+
   const navLinks = [
-    { name: t("Smartphone"), href: "/category/SMARTPHONE", icon: Smartphone },
-    { name: t("Laptop"), href: "/category/LAPTOP", icon: Laptop },
-    { name: t("Tablet"), href: "/category/TABLET", icon: Tablet },
-    { name: t("Audio"), href: "/category/AUDIO", icon: Headphones },
+    { name: t("Smartphone"), href: "/products?category=SMARTPHONE", icon: Smartphone },
+    { name: t("Laptop"), href: "/products?category=LAPTOP", icon: Laptop },
+    { name: t("Tablet"), href: "/products?category=TABLET", icon: Tablet },
+    { name: t("Audio"), href: "/products?category=AUDIO", icon: Headphones },
   ];
 
   return (
@@ -67,24 +83,32 @@ export function Navbar() {
             <Link
               key={link.name}
               href={link.href}
-              className="px-4 py-2 rounded-full text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-all flex items-center gap-2"
+              className="px-4 py-2 rounded-full text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-all flex items-center gap-2 group"
             >
-              <link.icon size={16} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+              <link.icon size={16} className="text-slate-400 group-hover:text-indigo-600 transition-colors" />
               {link.name}
             </Link>
           ))}
         </div>
 
-        {/* Search & Actions */}
-        <div className="flex-1 max-w-md hidden md:block relative group">
-          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-500 transition-colors">
-            <Search size={18} />
-          </div>
-          <Input 
-            className="h-10 pl-10 rounded-full bg-slate-100 dark:bg-white/5 border-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 transition-all text-sm font-medium"
-            placeholder={t("searchProduct") + "..."}
-          />
+        {/* Search Trigger - Professional Command Palette style */}
+        <div className="flex-1 max-w-md hidden md:block">
+           <button 
+             onClick={() => setIsSearchOpen(true)}
+             className="w-full h-11 px-4 rounded-full bg-slate-100 dark:bg-white/5 border border-transparent hover:border-indigo-500/30 flex items-center justify-between group transition-all"
+           >
+              <div className="flex items-center gap-3 text-slate-400 group-hover:text-slate-500">
+                <Search size={18} />
+                <span className="text-sm font-medium">{t("searchProduct")}...</span>
+              </div>
+              <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-black/20 border border-slate-200 dark:border-white/10 text-[10px] font-black text-slate-400 group-hover:text-indigo-600 transition-colors">
+                 <Command size={10} />
+                 <span>K</span>
+              </div>
+           </button>
         </div>
+
+        <SearchOverlay open={isSearchOpen} onOpenChange={setIsSearchOpen} />
 
         <div className="flex items-center gap-2">
           <ModeToggle />
@@ -239,24 +263,5 @@ export function Navbar() {
         </div>
       )}
     </nav>
-  );
-}
-
-function ChevronRight({ size, className }: { size: number; className?: string }) {
-  return (
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      width={size} 
-      height={size} 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2.5" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
-      className={className}
-    >
-      <path d="m9 18 6-6-6-6"/>
-    </svg>
   );
 }

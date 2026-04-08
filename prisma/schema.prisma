@@ -89,6 +89,7 @@ model Customer {
   updatedAt     DateTime       @updatedAt
   
   orders        Order[]
+  reviews       Review[]
 
   @@map("customer")
 }
@@ -142,6 +143,8 @@ model Product {
   
   is_active     Boolean  @default(true)
   is_featured   Boolean  @default(false)
+  reviews       Review[]
+  
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
 
@@ -221,4 +224,20 @@ model OrderItem {
   price           Float         // Lưu giá tại thời điểm mua
   
   @@map("order_items")
+}
+model Review {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  rating      Int      // 1-5
+  comment     String
+  
+  customer_id String   @db.ObjectId
+  customer    Customer @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+  
+  product_id  String   @db.ObjectId
+  product     Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("reviews")
 }

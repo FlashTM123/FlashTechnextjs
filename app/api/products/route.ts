@@ -1,15 +1,28 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// 1. LẤY DANH SÁCH SẢN PHẨM (Category đã là Enum)
-export async function GET() {
+// 1. LẤY DANH SÁCH SẢN PHẨM (Hỗ trợ Search & Limit)
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const search = searchParams.get("search");
+    const limit = searchParams.get("limit") ? parseInt(searchParams.get("limit")!) : undefined;
+
+    const where: any = { is_active: true };
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+      ];
+    }
+
     const products = await prisma.product.findMany({
+      where,
       include: {
         brand: true,
-        variants: true,
       },
       orderBy: { created_at: "desc" },
+      take: limit,
     });
     return NextResponse.json(products);
   } catch (error: any) {

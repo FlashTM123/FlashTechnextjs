@@ -30,6 +30,7 @@ import { useRouter } from "next/navigation";
 import { useCart, CartItem } from "@/app/context/cart-context";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { ReviewSection } from "./review-section";
 
 interface Variant {
   id: string;
@@ -477,20 +478,9 @@ export function ProductDetails({ product }: ProductDetailsProps) {
               </div>
            </section>
 
-           {/* Section 3: Clean User Reviews Block */}
+           {/* Section 3: Live User Reviews Block */}
            <section className="space-y-12">
-              <div className="flex items-center gap-6">
-                 <h3 className="text-lg font-black tracking-widest text-slate-900 dark:text-white uppercase">Cộng đồng FlashTech</h3>
-                 <div className="h-px bg-slate-100 dark:bg-white/10 flex-1" />
-              </div>
-
-              <div className="py-24 rounded-[40px] bg-slate-50 dark:bg-white/[0.01] border border-dashed border-slate-200 dark:border-white/5 flex flex-col items-center justify-center gap-8">
-                 <div className="w-20 h-20 rounded-3xl bg-white dark:bg-white/5 shadow-sm flex items-center justify-center text-slate-300 dark:text-white/10">
-                    <Star size={32} />
-                 </div>
-                 <p className="text-sm font-black uppercase tracking-widest text-slate-400">Chia sẻ niềm vui sở hữu siêu phẩm này</p>
-                 <Button variant="outline" className="h-12 px-10 rounded-xl border-slate-900 dark:border-white font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-all">Gửi nhận xét</Button>
-              </div>
+              <ReviewSection productId={product.id} productName={product.name} />
            </section>
 
         </div>

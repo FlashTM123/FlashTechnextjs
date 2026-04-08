@@ -5,13 +5,13 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 
 const categories = [
-  { name: "Smartphones", icon: Smartphone, color: "text-rose-500", bg: "bg-rose-500/10", border: "border-rose-500/20", href: "/category/SMARTPHONE" },
-  { name: "Laptops", icon: Laptop, color: "text-indigo-500", bg: "bg-indigo-500/10", border: "border-indigo-500/20", href: "/category/LAPTOP" },
-  { name: "Tablets", icon: Tablet, color: "text-sky-500", bg: "bg-sky-500/10", border: "border-sky-500/20", href: "/category/TABLET" },
-  { name: "Audio", icon: Headphones, color: "text-fuchsia-500", bg: "bg-fuchsia-500/10", border: "border-fuchsia-500/20", href: "/category/AUDIO" },
-  { name: "Watches", icon: Watch, color: "text-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/20", href: "/category/SMARTWATCH" },
-  { name: "Components", icon: Cpu, color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20", href: "/category/COMPONENT" },
-  { name: "Accessories", icon: Mouse, color: "text-slate-500", bg: "bg-slate-500/10", border: "border-slate-500/20", href: "/category/ACCESSORIES" },
+  { name: "Smartphones", icon: Smartphone, color: "text-rose-500", bg: "bg-rose-500/10", border: "border-rose-500/20", href: "/products?category=SMARTPHONE" },
+  { name: "Laptops", icon: Laptop, color: "text-indigo-500", bg: "bg-indigo-500/10", border: "border-indigo-500/20", href: "/products?category=LAPTOP" },
+  { name: "Tablets", icon: Tablet, color: "text-sky-500", bg: "bg-sky-500/10", border: "border-sky-500/20", href: "/products?category=TABLET" },
+  { name: "Audio", icon: Headphones, color: "text-fuchsia-500", bg: "bg-fuchsia-500/10", border: "border-fuchsia-500/20", href: "/products?category=AUDIO" },
+  { name: "Watches", icon: Watch, color: "text-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/20", href: "/products?category=SMARTWATCH" },
+  { name: "Components", icon: Cpu, color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20", href: "/products?category=COMPONENT" },
+  { name: "Accessories", icon: Mouse, color: "text-slate-500", bg: "bg-slate-500/10", border: "border-slate-500/20", href: "/products?category=ACCESSORIES" },
 ];
 
 export function CategoryBar() {
