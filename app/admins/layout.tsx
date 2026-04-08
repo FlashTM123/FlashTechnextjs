@@ -17,7 +17,8 @@ import {
   User,
   ChevronDown,
   Zap,
-  Globe
+  Globe,
+  Star
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -46,6 +47,7 @@ const menuItems = [
   { name: "brands", href: "/admins/brands", icon: Package },
   { name: "products", href: "/admins/products", icon: Package },
   { name: "orders", href: "/admins/orders", icon: ShoppingCart },
+  { name: "reviews", href: "/admins/reviews", icon: Star },
   { name: "analytics", href: "/admins/analytics", icon: BarChart3 },
   { name: "settings", href: "/admins/settings", icon: Settings },
 ];

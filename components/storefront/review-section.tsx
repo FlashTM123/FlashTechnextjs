@@ -58,6 +58,11 @@ export function ReviewSection({ productId, productName }: ReviewSectionProps) {
     };
   }, [reviews]);
 
+  const userReview = useMemo(() => {
+    if (!customer) return null;
+    return reviews.find(r => r.customer.name === customer.full_name); // Matching by name as a proxy for simplicity since customer.id might not be in the review object depending on API
+  }, [reviews, customer]);
+
   if (loading) {
     return (
       <div className="py-24 flex items-center justify-center">
@@ -100,7 +105,7 @@ export function ReviewSection({ productId, productName }: ReviewSectionProps) {
                   onClick={() => setShowForm(true)}
                   className="h-14 px-10 rounded-[20px] bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[11px] uppercase tracking-widest shadow-xl transition-all hover:scale-105 active:scale-95"
                 >
-                  Viết nhận xét của bạn
+                  {userReview ? "Sửa nhận xét của bạn" : "Viết nhận xét của bạn"}
                 </Button>
               )
            ) : (
@@ -115,9 +120,15 @@ export function ReviewSection({ productId, productName }: ReviewSectionProps) {
         <ReviewForm 
           productId={productId} 
           customerId={customer.id} 
+          initialRating={userReview?.rating}
+          initialComment={userReview?.comment}
           onCancel={() => setShowForm(false)}
           onSuccess={(newReview) => {
-            setReviews([newReview, ...reviews]);
+            if (userReview) {
+              setReviews(reviews.map(r => r.id === newReview.id ? newReview : r));
+            } else {
+              setReviews([newReview, ...reviews]);
+            }
             setShowForm(false);
           }}
         />

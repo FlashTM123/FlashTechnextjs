@@ -20,6 +20,7 @@ export async function GET(request: Request) {
       where,
       include: {
         brand: true,
+        variants: true,
       },
       orderBy: { created_at: "desc" },
       take: limit,

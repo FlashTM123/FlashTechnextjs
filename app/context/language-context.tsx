@@ -20,6 +20,7 @@ const translations: Translations = {
   brands: { en: "Brands", vi: "Thương hiệu" },
   analytics: { en: "Analytics", vi: "Phân tích" },
   settings: { en: "Settings", vi: "Cài đặt" },
+  reviews: { en: "Reviews", vi: "Đánh giá" },
   adminControl: { en: "Admin Control", vi: "Quản trị viên" },
   searchAnything: { en: "Search anything...", vi: "Tìm kiếm..." },
   logout: { en: "Log Out Account", vi: "Đăng xuất" },

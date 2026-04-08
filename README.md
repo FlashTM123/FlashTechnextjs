@@ -2,13 +2,17 @@
 
 Một nền tảng quản lý và trải nghiệm mua sắm thương mại điện tử chuyên nghiệp được xây dựng bằng **Next.js 16**, **React 19**, **TypeScript**, **Tailwind CSS 4**, và **Shadcn/ui**.
 
-## 🌟 Mới Nhất: Premium Global Search & Advanced Storefront Experience (08/04/2026)
+## 🌟 Mới Nhất: Real-Time Admin Intelligence & Feedback Ecosystem (08/04/2026)
 
-- 🔍 **Professional Command-Palette Search**: Triển khai hệ thống tìm kiếm Global Search Overlay cao cấp. Hỗ trợ phím tắt `Cmd+K`, live search kết quả ngay khi gõ với ảnh sản phẩm và giá, tích hợp hiệu ứng Glassmorphism & Framer Motion.
-- 🛒 **Advanced Unified Catalog**: Xây dựng trang danh mục sản phẩm (`/products`) chuyên nghiệp với hệ thống lọc đa năng (Category, Brand, Price Range) đồng bộ trực tiếp với URL. Tích hợp thanh Sidebar tinh gọn trên cả Mobile và Desktop.
-- ⭐ **Trusted Review System**: Triển khai hệ thống đánh giá sản phẩm toàn diện. Tự động nhận diện và gắn nhãn **"Đã mua hàng" (Verified Purchase)** cho khách hàng đã nhận hàng trực tiếp từ dữ liệu Prisma.
-- 🔗 **Synchronized Navigation**: Đồng bộ hóa toàn bộ hệ thống điều hướng trên Navbar và Trang chủ để sử dụng cơ chế tìm kiếm và lọc mới, tạo trải nghiệm mua sắm liền mạch.
-- 🛠️ **UI/UX Fixes**: Giải quyết triệt để lỗi Hydration (nested buttons), fix lỗi thiếu component `textarea`, và tối ưu hóa kích cỡ Search Overlay cho trải nghiệm "professional" hơn.
+- 📊 **Dynamic Analytics Dashboard**: Chuyển đổi toàn bộ hệ thống báo cáo sang dữ liệu thực tế (Real-time DB). Tích hợp biểu đồ tăng trưởng doanh thu, tỷ trọng ngành hàng và top sản phẩm bán chạy sử dụng `recharts`.
+- ⚙️ **Advanced Admin Settings**: Triển khai trang cấu hình hệ thống toàn diện. Hỗ trợ thay đổi thông tin cửa hàng, cài đặt khu vực (Tiền tệ/Ngôn ngữ) và các công tắc điều hướng tính năng (Chế độ bảo trì, Moderation toggles).
+- 💬 **Integrated Review Moderation**: Hệ thống quản lý đánh giá 2 lớp:
+  - **Global**: Trang quản lý tập trung toàn bộ feedback của khách hàng.
+  - **Contextual**: Tích hợp Drawer xem đánh giá trực tiếp ngay trong danh sách quản lý sản phẩm.
+- 🔄 **Review Persistence & Logic**: Áp dụng quy tắc "Một tài khoản - Một đánh giá" trên mỗi sản phẩm, đồng thời cho phép khách hàng sửa lại nhận xét cũ thay vì tạo bài viết mới (Upsert logic).
+- 🛠️ **System Stability**: Hoàn thiện bộ UI Library với các component `Switch`, `Badge` và đồng bộ hóa các API aggregation để tối ưu hiệu suất dashboard.
+
+## 🌟 Cập Nhật Trước Đó: Premium Global Search & Advanced Storefront Experience (08/04/2026)
 
 ## 🌟 Cập Nhật Trước Đó: Data-Driven Commerce Hub (06/04/2026)
 

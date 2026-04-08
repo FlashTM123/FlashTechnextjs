@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Search, MoreVertical, Edit, Trash2, Package, Globe, Tag, Layers, AlertCircle, Loader2, Coins, Archive, Smartphone, Laptop, Tablet, Headphones, Watch, Cpu, Sparkles, Upload, Eye, Activity, CheckCircle2, ShieldCheck, Check, Star } from "lucide-react";
+import { Plus, Search, MoreVertical, Edit, Trash2, Package, Globe, Tag, Layers, AlertCircle, Loader2, Coins, Archive, Smartphone, Laptop, Tablet, Headphones, Watch, Cpu, Sparkles, Upload, Eye, Activity, CheckCircle2, ShieldCheck, Check, Star, MessageSquare, ExternalLink, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -139,6 +139,12 @@ export default function ProductsPage() {
   };
 
   const [formData, setFormData] = useState(initialFormData);
+
+  // Review Drawer state
+  const [isReviewsOpen, setIsReviewsOpen] = useState(false);
+  const [selectedProductForReviews, setSelectedProductForReviews] = useState<Product | null>(null);
+  const [productReviews, setProductReviews] = useState<any[]>([]);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -291,6 +297,25 @@ export default function ProductsPage() {
     }
   };
 
+  const openReviews = async (product: Product) => {
+    setSelectedProductForReviews(product);
+    setIsReviewsOpen(true);
+    setReviewsLoading(true);
+    try {
+      const res = await fetch(`/api/admin/reviews?search=${encodeURIComponent(product.name)}`);
+      if (res.ok) {
+        const data = await res.json();
+        // Filter reviews to strictly match this product's ID since search is fuzzy
+        setProductReviews(data.filter((r: any) => r.product.id === product.id));
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Không thể tải đánh giá cho sản phẩm này");
+    } finally {
+      setReviewsLoading(false);
+    }
+  };
+
   const openEdit = (product: Product) => {
     setIsEditMode(true);
     setFormData({
@@ -307,7 +332,7 @@ export default function ProductsPage() {
       is_active: product.is_active,
       is_featured: product.is_featured,
       specs: product.specs || {},
-      variants: product.variants.map(v => ({
+      variants: (product.variants || []).map(v => ({
         ...v,
         price: v.price.toString(),
         original_price: v.original_price?.toString() || "",
@@ -647,6 +672,13 @@ export default function ProductsPage() {
                 </div>
 
                 <div className="pt-4 flex items-center gap-2 border-t border-slate-100 dark:border-white/5">
+                  <Button
+                    onClick={() => openReviews(product)}
+                    variant="ghost"
+                    className="h-11 w-11 rounded-xl bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 p-0 transition-all"
+                  >
+                    <MessageSquare size={18} />
+                  </Button>
                   <Button
                     onClick={() => { setPreviewProduct(product); setIsPreviewOpen(true); }}
                     variant="ghost"
@@ -1357,6 +1389,83 @@ export default function ProductsPage() {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Product Reviews Drawer */}
+      <Dialog open={isReviewsOpen} onOpenChange={setIsReviewsOpen}>
+        <DialogContent className="max-w-md sm:max-w-xl h-full sm:h-auto sm:max-h-[85vh] overflow-y-auto rounded-none sm:rounded-[40px] border-slate-200 dark:border-white/10 bg-white dark:bg-[#0A0A0B] p-0 shadow-2xl flex flex-col">
+          <div className="sticky top-0 z-20 bg-white/80 dark:bg-[#0A0A0B]/80 backdrop-blur-xl border-b border-slate-100 dark:border-white/5 p-6 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
+                <MessageSquare size={20} />
+              </div>
+              <div className="space-y-0.5">
+                <DialogTitle className="text-xl font-black tracking-tight text-slate-900 dark:text-white">
+                  Đánh giá sản phẩm
+                </DialogTitle>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate max-w-[200px]">{selectedProductForReviews?.name}</p>
+              </div>
+            </div>
+            {productReviews.length > 0 && (
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 dark:bg-white/10 border border-slate-100 dark:border-white/5 shadow-sm">
+                <Star size={12} className="text-amber-400 fill-amber-400" />
+                <span className="text-sm font-black text-slate-900 dark:text-white">
+                  {(productReviews.reduce((acc, r) => acc + r.rating, 0) / productReviews.length).toFixed(1)}
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+            {reviewsLoading ? (
+               <div className="py-20 flex flex-col items-center justify-center gap-4">
+                 <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Đang đồng bộ dữ liệu...</p>
+               </div>
+            ) : productReviews.length === 0 ? (
+               <div className="py-20 flex flex-col items-center justify-center gap-4 text-center opacity-50 grayscale">
+                 <div className="w-16 h-16 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center">
+                    <MessageSquare size={32} className="text-slate-300" />
+                 </div>
+                 <div className="space-y-1">
+                   <p className="text-sm font-bold text-slate-900 dark:text-white">Chưa có đánh giá nào</p>
+                   <p className="text-[10px] uppercase font-black tracking-widest text-slate-400">Sản phẩm này hiện chưa có phản hồi từ người dùng</p>
+                 </div>
+               </div>
+            ) : (
+              productReviews.map((review) => (
+                <div key={review.id} className="p-6 rounded-[24px] bg-slate-50/50 dark:bg-white/[0.02] border border-slate-100 dark:border-white/5 hover:bg-white dark:hover:bg-white/[0.05] transition-all group">
+                   <div className="flex justify-between items-start mb-4">
+                     <div className="flex items-center gap-3">
+                       <Avatar className="h-10 w-10 border border-white dark:border-slate-800 shadow-sm">
+                         <AvatarImage src={review.customer.avatar} />
+                         <AvatarFallback className="text-[10px] font-black bg-indigo-500 text-white">{review.customer.full_name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                       </Avatar>
+                       <div className="flex flex-col">
+                          <span className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{review.customer.full_name}</span>
+                          <span className="text-[10px] text-slate-400 font-medium">{review.customer.email}</span>
+                       </div>
+                     </div>
+                     <div className="flex items-center gap-0.5">
+                       {[1, 2, 3, 4, 5].map((s) => (
+                         <Star key={s} size={10} className={cn(s <= review.rating ? "text-amber-400 fill-amber-400" : "text-slate-200 dark:text-white/10")} />
+                       ))}
+                     </div>
+                   </div>
+                   <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium italic">"{review.comment}"</p>
+                   <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-4">{new Date(review.createdAt).toLocaleDateString('vi-VN')}</p>
+                </div>
+              ))
+            )}
+          </div>
+
+          <div className="p-6 bg-slate-50/50 dark:bg-white/[0.02] border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
+             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">HIỂN THỊ {productReviews.length} ĐÁNH GIÁ</p>
+             <Link href="/admins/reviews" className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest flex items-center gap-2 hover:underline">
+               Tất cả đánh giá <ExternalLink size={14} />
+             </Link>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

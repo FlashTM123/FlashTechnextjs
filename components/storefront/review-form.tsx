@@ -10,15 +10,25 @@ import { cn } from "@/lib/utils";
 interface ReviewFormProps {
   productId: string;
   customerId: string;
+  initialRating?: number;
+  initialComment?: string;
   onSuccess: (newReview: any) => void;
   onCancel: () => void;
 }
 
-export function ReviewForm({ productId, customerId, onSuccess, onCancel }: ReviewFormProps) {
-  const [rating, setRating] = useState(5);
+export function ReviewForm({ 
+  productId, 
+  customerId, 
+  initialRating = 5, 
+  initialComment = "", 
+  onSuccess, 
+  onCancel 
+}: ReviewFormProps) {
+  const [rating, setRating] = useState(initialRating);
   const [hoveredRating, setHoveredRating] = useState(0);
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState(initialComment);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isEditing = initialComment !== "" || initialRating !== 5;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,7 +130,7 @@ export function ReviewForm({ productId, customerId, onSuccess, onCancel }: Revie
             ) : (
               <Send size={14} />
             )}
-            Gửi đánh giá
+            {isEditing ? "Cập nhật đánh giá" : "Gửi đánh giá"}
           </Button>
         </div>
       </form>

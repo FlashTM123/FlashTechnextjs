@@ -69,33 +69,63 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
     }
 
-    const review = await prisma.review.create({
-      data: {
+    // Check if review already exists for this customer/product
+    const existingReview = await prisma.review.findFirst({
+      where: {
         product_id: productId,
-        customer_id: customerId,
-        rating: Number(rating),
-        comment: comment || ""
-      },
-      include: {
-        customer: {
-          select: {
-            full_name: true,
-            avatar: true,
-            orders: {
-              where: {
-                status: "DELIVERED",
-                items: {
-                  some: {
-                    product_id: productId
-                  }
-                }
-              },
-              take: 1
+        customer_id: customerId
+      }
+    });
+
+    let review;
+    if (existingReview) {
+      review = await prisma.review.update({
+        where: { id: existingReview.id },
+        data: {
+          rating: Number(rating),
+          comment: comment || ""
+        },
+        include: {
+          customer: {
+            select: {
+              full_name: true,
+              avatar: true,
+              orders: {
+                where: {
+                  status: "DELIVERED",
+                  items: { some: { product_id: productId } }
+                },
+                take: 1
+              }
             }
           }
         }
-      }
-    });
+      });
+    } else {
+      review = await prisma.review.create({
+        data: {
+          product_id: productId,
+          customer_id: customerId,
+          rating: Number(rating),
+          comment: comment || ""
+        },
+        include: {
+          customer: {
+            select: {
+              full_name: true,
+              avatar: true,
+              orders: {
+                where: {
+                  status: "DELIVERED",
+                  items: { some: { product_id: productId } }
+                },
+                take: 1
+              }
+            }
+          }
+        }
+      });
+    }
 
     const formattedReview = {
       id: review.id,
