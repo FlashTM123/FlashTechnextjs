@@ -209,7 +209,7 @@ export default function SettingsPage() {
                             <Select 
                                 disabled={loading}
                                 value={formData.gender} 
-                                onValueChange={(val) => setFormData({...formData, gender: val})}
+                                onValueChange={(val) => setFormData({...formData, gender: val || "HIDDEN"})}
                             >
                                 <SelectTrigger className="h-14 pl-12 rounded-2xl bg-slate-50 dark:bg-white/5 border-none font-bold focus:ring-2 focus:ring-indigo-500/50">
                                     <SelectValue placeholder="Chọn giới tính" />

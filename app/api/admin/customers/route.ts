@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { $Enums, Prisma } from "@/generated/prisma";
+import { $Enums, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
