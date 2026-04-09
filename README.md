@@ -2,15 +2,20 @@
 
 Một nền tảng quản lý và trải nghiệm mua sắm thương mại điện tử chuyên nghiệp được xây dựng bằng **Next.js 16**, **React 19**, **TypeScript**, **Tailwind CSS 4**, và **Shadcn/ui**.
 
-## 🌟 Mới Nhất: Real-Time Admin Intelligence & Feedback Ecosystem (08/04/2026)
+## 🌟 Mới Nhất: Core Stability & API Synchronization Hub (09/04/2026)
 
-- 📊 **Dynamic Analytics Dashboard**: Chuyển đổi toàn bộ hệ thống báo cáo sang dữ liệu thực tế (Real-time DB). Tích hợp biểu đồ tăng trưởng doanh thu, tỷ trọng ngành hàng và top sản phẩm bán chạy sử dụng `recharts`.
-- ⚙️ **Advanced Admin Settings**: Triển khai trang cấu hình hệ thống toàn diện. Hỗ trợ thay đổi thông tin cửa hàng, cài đặt khu vực (Tiền tệ/Ngôn ngữ) và các công tắc điều hướng tính năng (Chế độ bảo trì, Moderation toggles).
-- 💬 **Integrated Review Moderation**: Hệ thống quản lý đánh giá 2 lớp:
-  - **Global**: Trang quản lý tập trung toàn bộ feedback của khách hàng.
-  - **Contextual**: Tích hợp Drawer xem đánh giá trực tiếp ngay trong danh sách quản lý sản phẩm.
-- 🔄 **Review Persistence & Logic**: Áp dụng quy tắc "Một tài khoản - Một đánh giá" trên mỗi sản phẩm, đồng thời cho phép khách hàng sửa lại nhận xét cũ thay vì tạo bài viết mới (Upsert logic).
-- 🛠️ **System Stability**: Hoàn thiện bộ UI Library với các component `Switch`, `Badge` và đồng bộ hóa các API aggregation để tối ưu hiệu suất dashboard.
+- 🛠️ **Infrastructure & API Sync**: 
+  - Đưa toàn bộ hệ thống quản lý sản phẩm về chuẩn `category_id` (ObjectID), giải quyết triệt để lỗi mất dữ liệu danh mục khi lưu.
+  - Sửa lỗi nghiêm trọng trên Next.js 16: Cập nhật cơ chế `await params` cho các API route động (`PATCH`/`DELETE` products & categories).
+- 🎨 **Premium UI Interactivity**:
+  - Tối ưu hóa component `Switch`: Ngăn chặn hành vi "double-toggling" và xung đột sự kiện `onClick` trong form.
+  - Cải thiện trải nghiệm người dùng: Mở rộng vùng tương tác (click targets) cho các công tắc trạng thái (Active/Inactive) trong dashboard.
+- 🚀 **Build & Performance Optimization**:
+  - Giải quyết 100% các lỗi Build "Expected a semicolon" do Turbopack parsing bằng cách tái cấu trúc lại logic destructuring assignment.
+  - Khôi phục các import bị thiếu (`Link`, Lucide icons) và tối ưu hóa bộ lọc sản phẩm để tránh lỗi "Malformed ObjectID".
+- 🏷️ **Data Integrity**: Hoàn thiện logic kiểm tra ràng buộc khi xóa danh mục (Chặn xóa nếu còn sản phẩm liên quan) và đồng bộ hóa biến thể (variants) động.
+
+## 🌟 Cập Nhật Trước Đó: Real-Time Admin Intelligence & Feedback Ecosystem (08/04/2026)
 
 ## 🌟 Cập Nhật Trước Đó: Premium Global Search & Advanced Storefront Experience (08/04/2026)
 

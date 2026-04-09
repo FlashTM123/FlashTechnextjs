@@ -12,6 +12,7 @@ import { useLanguage } from "@/app/context/language-context";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Metadata } from "next";
+import Link from "next/link";
 
 interface Brand {
   id: string;
@@ -358,7 +359,7 @@ export default function ProductsPage() {
     delete newSpecs[key];
     setFormData({ ...formData, specs: newSpecs });
   };
-
+  const filteredProducts = products.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.brand?.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = filterCategory === "ALL" || (p as any).category_id === filterCategory;
@@ -375,6 +376,9 @@ export default function ProductsPage() {
 
     return matchesSearch && matchesCategory && matchesBrand && matchesStatus;
   });
+
+  const currentCategorySlug = categories.find(c => c.id === formData.category_id)?.slug || "other";
+  const currentVariantConfig = (VARIANT_FIELD_CONFIG as any)[currentCategorySlug] || VARIANT_FIELD_CONFIG.other;
 
   const [newImageUrl, setNewImageUrl] = useState("");
 
@@ -1140,44 +1144,44 @@ export default function ProductsPage() {
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                 {formData.variants.map((variant, index) => (
                   <div key={index} className="group relative p-6 rounded-[32px] border border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02] hover:border-indigo-500/30 transition-all space-y-6 shadow-sm">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className="h-8 px-4 flex items-center bg-indigo-600 text-white text-[10px] font-black rounded-full uppercase tracking-widest shadow-lg shadow-indigo-500/20">
-                          {t("variantTitle")} {index + 1}
-                        </span>
-                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter max-w-[120px] truncate">
-                          {variant.name || "UNNAMED CONFIG"}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className="h-8 px-4 flex items-center bg-indigo-600 text-white text-[10px] font-black rounded-full uppercase tracking-widest shadow-lg shadow-indigo-500/20">
+                            {t("variantTitle")} {index + 1}
+                          </span>
+                          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter max-w-[120px] truncate">
+                            {variant.name || "UNNAMED CONFIG"}
+                          </div>
                         </div>
+                        {formData.variants.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveVariant(index)}
+                            className="h-8 w-8 rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        )}
                       </div>
-                      {formData.variants.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveVariant(index)}
-                          className="h-8 w-8 rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      )}
-                    </div>
 
-                    <div className={`grid gap-4 ${(VARIANT_FIELD_CONFIG[formData.category] || VARIANT_FIELD_CONFIG.OTHER).length > 2
-                      ? "grid-cols-2 md:grid-cols-3"
-                      : "grid-cols-2"
-                      }`}>
-                      {(VARIANT_FIELD_CONFIG[formData.category] || VARIANT_FIELD_CONFIG.OTHER).map((f) => (
-                        <div key={f.key} className="space-y-2">
-                          <Label className="text-[10px] font-black uppercase text-slate-400">
-                            {f.isFixed ? t(f.label) : f.label}
-                          </Label>
-                          <Input
-                            value={(f.isFixed ? (variant as any)[f.key] : variant.specs?.[f.key]) || ""}
-                            onChange={(e) => handleVariantChange(index, f.key, e.target.value)}
-                            placeholder={f.placeholder}
-                            className="h-10 bg-white dark:bg-black rounded-xl border-slate-200 dark:border-white/10 text-xs font-bold"
-                          />
-                        </div>
-                      ))}
-                    </div>
+                      <div className={`grid gap-4 ${currentVariantConfig.length > 2
+                        ? "grid-cols-2 md:grid-cols-3"
+                        : "grid-cols-2"
+                        }`}>
+                        {currentVariantConfig.map((f: any) => (
+                          <div key={f.key} className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase text-slate-400">
+                              {f.isFixed ? t(f.label) : f.label}
+                            </Label>
+                            <Input
+                              value={(f.isFixed ? (variant as any)[f.key] : variant.specs?.[f.key]) || ""}
+                              onChange={(e) => handleVariantChange(index, f.key, e.target.value)}
+                              placeholder={f.placeholder}
+                              className="h-10 bg-white dark:bg-black rounded-xl border-slate-200 dark:border-white/10 text-xs font-bold"
+                            />
+                          </div>
+                        ))}
+                      </div>
 
                     <div className="grid grid-cols-3 gap-4 pt-4 border-t border-slate-100 dark:border-white/5">
                       <div className="space-y-2">

@@ -309,20 +309,23 @@ export default function CategoriesPage() {
                   <span className="text-indigo-500 lowercase font-medium">{formData.icon}</span>
                 </Label>
                 <div className="grid grid-cols-8 gap-2 p-4 bg-slate-50 dark:bg-white/[0.02] rounded-2xl border border-slate-100 dark:border-white/10 h-32 overflow-y-auto custom-scrollbar">
-                  {PRESET_ICONS.map(icon => (
-                    <button
-                      key={icon}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, icon })}
-                      className={`h-10 w-10 flex items-center justify-center rounded-lg transition-all ${
-                        formData.icon === icon 
-                        ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 scale-110" 
-                        : "hover:bg-indigo-50 dark:hover:bg-indigo-500/10 text-slate-400"
-                      }`}
-                    >
-                      {(LucideIcons as any)[icon] ? (LucideIcons as any)[icon]({ size: 18 }) : <Package size={18} />}
-                    </button>
-                  ))}
+                  {PRESET_ICONS.map(icon => {
+                    const Icon = (LucideIcons as any)[icon] || Package;
+                    return (
+                      <button
+                        key={icon}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, icon })}
+                        className={`h-10 w-10 flex items-center justify-center rounded-lg transition-all ${
+                          formData.icon === icon 
+                          ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 scale-110" 
+                          : "hover:bg-indigo-50 dark:hover:bg-indigo-500/10 text-slate-400"
+                        }`}
+                      >
+                        <Icon size={18} />
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -336,7 +339,9 @@ export default function CategoriesPage() {
                 />
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-indigo-50/50 dark:bg-indigo-500/5 rounded-2xl border border-indigo-100 dark:border-indigo-500/10">
+              <div 
+                className="flex items-center justify-between p-4 bg-indigo-50/50 dark:bg-indigo-500/5 rounded-2xl border border-indigo-100 dark:border-indigo-500/10 hover:bg-indigo-100/30 dark:hover:bg-indigo-500/10 transition-colors"
+              >
                 <div className="space-y-0.5">
                   <p className="text-sm font-bold text-slate-900 dark:text-white">{t("active")}</p>
                   <p className="text-[10px] text-slate-500 uppercase tracking-tight">Show category on storefront</p>

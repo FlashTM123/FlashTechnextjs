@@ -32,17 +32,17 @@ export async function GET(request: Request) {
   }
 }
 
-// 2. THÊM SẢN PHẨM MỚI (Dùng Category dưới dạng Enum)
+// 2. THÊM SẢN PHẨM MỚI (Sử dụng category_id ObjectID)
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const data = await request.json();
     const { 
       name, slug, description, details, base_price, original_price, images, 
-      brand_id, category, specs, variants, is_active, is_featured 
-    } = body;
+      brand_id, category_id, specs, variants, is_active, is_featured 
+    } = data;
 
-    if (!name || !slug || !brand_id || !category) {
-      return NextResponse.json({ error: "Missing required fields (name, slug, brand, category)" }, { status: 400 });
+    if (!name || !slug || !brand_id || !category_id) {
+      return NextResponse.json({ error: "Missing required fields (name, slug, brand, category_id)" }, { status: 400 });
     }
 
     const newProduct = await prisma.product.create({
@@ -55,12 +55,12 @@ export async function POST(request: Request) {
         original_price: original_price ? parseFloat(original_price) : null,
         images,
         brand_id,
-        category, // Gán trực tiếp giá trị Enum như 'SMARTPHONE'
+        category_id,
         specs: specs || {},
         is_active: is_active !== undefined ? is_active : true,
         is_featured: is_featured !== undefined ? is_featured : false,
         variants: {
-          create: variants.map((v: any) => ({
+          create: (variants || []).map((v: any) => ({
             name: v.name,
             sku: v.sku,
             color: v.color,

@@ -1,25 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// 1. SỬA SẢN PHẨM & BIẾN THỂ (Category là Enum)
+// 1. SỬA SẢN PHẨM & BIẾN THỂ (Sử dụng category_id ObjectID)
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const resolvedParams = await params;
-    const { id: routeId } = resolvedParams;
-
-    // Phân tích URL nếu params bị lỗi
-    const url = new URL(request.url);
-    const manualId = url.pathname.split('/').pop();
-    const id = (routeId && routeId !== "undefined") ? routeId : manualId;
-
-    const body = await request.json();
+    const { id } = await params;
+    const data = await request.json();
+    
     const { 
       name, slug, description, details, base_price, original_price, images, 
-      brand_id, category, specs, variants, is_active, is_featured
-    } = body;
+      brand_id, category_id, specs, variants, is_active, is_featured
+    } = data;
 
     if (!id || id === "undefined") {
       return NextResponse.json({ error: "No valid ID found" }, { status: 400 });
@@ -36,13 +30,13 @@ export async function PATCH(
         original_price: original_price ? parseFloat(original_price) : null,
         images,
         brand_id,
-        category, // Trực tiếp lưu giá trị Enum
+        category_id,
         specs: specs || {},
         is_active: is_active !== undefined ? is_active : true,
         is_featured: is_featured !== undefined ? is_featured : false,
         variants: {
           deleteMany: {}, // Đồng bộ danh sách biến thể
-          create: variants.map((v: any) => ({
+          create: (variants || []).map((v: any) => ({
             name: v.name,
             sku: v.sku,
             color: v.color,
@@ -71,8 +65,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const resolvedParams = await params;
-    const id = resolvedParams.id;
+    const { id } = await params;
 
     if (!id || id === "undefined") {
       return NextResponse.json({ error: "Invalid product ID" }, { status: 400 });

@@ -20,19 +20,24 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
   // 1. Fetch filter options (Brands & Categories)
   const [brands, categories] = await Promise.all([
-    prisma.brands.findMany({ select: { id: true, name: true } }),
-    prisma.category.findMany({ select: { id: true, name: true }, where: { is_active: true } })
+    prisma.brands.findMany({ select: { id: true, name: true, slug: true } }),
+    prisma.category.findMany({ select: { id: true, name: true, slug: true }, where: { is_active: true } })
   ]);
 
   // 2. Build Prisma Query
   const where: any = { is_active: true };
 
+  // Helper to safely handle ObjectId filtering
+  const DUMMY_ID = "000000000000000000000000";
+
   if (category) {
-    where.category_id = category;
+    const selectedCategory = categories.find(c => c.id === category || c.slug === category);
+    where.category_id = selectedCategory ? selectedCategory.id : DUMMY_ID;
   }
 
   if (brand) {
-    where.brand_id = brand;
+    const selectedBrand = brands.find(b => b.id === brand || b.slug === brand);
+    where.brand_id = selectedBrand ? selectedBrand.id : DUMMY_ID;
   }
 
   if (minPrice || maxPrice) {

@@ -3,12 +3,16 @@ import { prisma } from "@/lib/prisma";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id;
+    const { id } = await params;
     const body = await request.json();
     const { name, slug, icon, description, is_active } = body;
+
+    if (!id) {
+        return NextResponse.json({ message: "Missing ID" }, { status: 400 });
+    }
 
     const category = await prisma.category.update({
       where: { id },
@@ -22,18 +26,22 @@ export async function PATCH(
     });
 
     return NextResponse.json({ category });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Update Category Error:", error);
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+    return NextResponse.json({ message: "Server error: " + error.message }, { status: 500 });
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id;
+    const { id } = await params;
+
+    if (!id) {
+        return NextResponse.json({ message: "Missing ID" }, { status: 400 });
+    }
 
     // Check if category has products
     const productCount = await prisma.product.count({
@@ -51,8 +59,8 @@ export async function DELETE(
     });
 
     return NextResponse.json({ message: "Category deleted successfully" });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Delete Category Error:", error);
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+    return NextResponse.json({ message: "Server error: " + error.message }, { status: 500 });
   }
 }
