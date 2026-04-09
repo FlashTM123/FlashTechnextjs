@@ -22,6 +22,7 @@ interface Category {
   id: string;
   name: string;
   slug: string;
+  icon?: string;
 }
 
 interface Variant {
@@ -60,6 +61,7 @@ export default function ProductsPage() {
   const { t } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -77,42 +79,33 @@ export default function ProductsPage() {
   const [filterBrand, setFilterBrand] = useState("ALL");
   const [filterStatus, setFilterStatus] = useState("ALL");
 
-  const CATEGORY_TYPES = [
-    { label: "Smartphone", value: "SMARTPHONE", icon: Smartphone },
-    { label: "Laptop", value: "LAPTOP", icon: Laptop },
-    { label: "Tablet", value: "TABLET", icon: Tablet },
-    { label: "Watch", value: "SMARTWATCH", icon: Watch },
-    { label: "Audio", value: "AUDIO", icon: Headphones },
-    { label: "Accessories", value: "ACCESSORIES", icon: Package },
-    { label: "Component", value: "COMPONENT", icon: Cpu },
-    { label: "Other", value: "OTHER", icon: Layers },
-  ];
+  // We'll fetch these from API instead
 
   const VARIANT_FIELD_CONFIG: Record<string, { key: string; label: string; placeholder: string; isFixed?: boolean }[]> = {
-    SMARTPHONE: [
+    smartphone: [
       { key: "storage", label: "storage", placeholder: "256GB", isFixed: true },
       { key: "color", label: "color", placeholder: "Graphite", isFixed: true },
     ],
-    TABLET: [
+    tablet: [
       { key: "storage", label: "storage", placeholder: "256GB", isFixed: true },
       { key: "color", label: "color", placeholder: "Space Gray", isFixed: true },
     ],
-    LAPTOP: [
+    laptop: [
       { key: "cpu", label: "CPU", placeholder: "Intel Core i7 / Apple M3" },
       { key: "gpu", label: "GPU", placeholder: "RTX 4060 / Integrated" },
       { key: "ram", label: "ram", placeholder: "16GB", isFixed: true },
       { key: "storage", label: "storage", placeholder: "512GB", isFixed: true },
       { key: "color", label: "color", placeholder: "Midnight Black", isFixed: true },
     ],
-    SMARTWATCH: [
+    watch: [
       { key: "size", label: "Size", placeholder: "44mm / 45mm" },
       { key: "color", label: "color", placeholder: "Starlight", isFixed: true },
     ],
-    AUDIO: [
+    audio: [
       { key: "type", label: "Model/Type", placeholder: "Over-ear / In-ear" },
       { key: "color", label: "color", placeholder: "Black", isFixed: true },
     ],
-    OTHER: [
+    other: [
       { key: "config", label: "Configuration", placeholder: "Standard / Premium" },
       { key: "color", label: "color", placeholder: "Default", isFixed: true },
     ]
@@ -128,7 +121,7 @@ export default function ProductsPage() {
     original_price: "",
     images: [] as string[],
     brand_id: "",
-    category: "SMARTPHONE",
+    category_id: "", // Now using category_id
     specs: {} as Record<string, string>,
     is_active: true,
     is_featured: false,
@@ -153,13 +146,18 @@ export default function ProductsPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [pRes, bRes] = await Promise.all([
+      const [pRes, bRes, cRes] = await Promise.all([
         fetch("/api/products"),
-        fetch("/api/brands")
+        fetch("/api/brands"),
+        fetch("/api/admin/categories")
       ]);
 
       if (pRes.ok) setProducts(await pRes.json());
       if (bRes.ok) setBrands(await bRes.json());
+      if (cRes.ok) {
+        const data = await cRes.json();
+        setCategories(data.categories);
+      }
     } finally {
       setLoading(false);
     }
@@ -197,8 +195,8 @@ export default function ProductsPage() {
 
   const handleVariantChange = (index: number, field: string, value: any) => {
     const list = [...formData.variants];
-    const category = formData.category || "OTHER";
-    const config = VARIANT_FIELD_CONFIG[category] || VARIANT_FIELD_CONFIG.OTHER;
+    const category = categories.find(c => c.id === formData.category_id)?.slug || "other";
+    const config = VARIANT_FIELD_CONFIG[category] || VARIANT_FIELD_CONFIG.other;
 
     // Update core fields or specs
     const coreFields = ['storage', 'ram', 'color', 'price', 'original_price', 'stock', 'sku', 'name'];
@@ -328,7 +326,7 @@ export default function ProductsPage() {
       original_price: product.original_price?.toString() || "",
       images: product.images,
       brand_id: product.brand_id,
-      category: (product as any).category || "SMARTPHONE",
+      category_id: (product as any).category_id,
       is_active: product.is_active,
       is_featured: product.is_featured,
       specs: product.specs || {},
@@ -361,10 +359,9 @@ export default function ProductsPage() {
     setFormData({ ...formData, specs: newSpecs });
   };
 
-  const filteredProducts = products.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.brand?.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = filterCategory === "ALL" || (p as any).category === filterCategory;
+    const matchesCategory = filterCategory === "ALL" || (p as any).category_id === filterCategory;
     const matchesBrand = filterBrand === "ALL" || p.brand_id === filterBrand;
 
     let matchesStatus = true;
@@ -448,7 +445,7 @@ export default function ProductsPage() {
         body: JSON.stringify({
           name: formData.name,
           brand: brandName,
-          category: formData.category,
+          category: categories.find(c => c.id === formData.category_id)?.name || "Tech Item",
           type
         })
       });
@@ -551,9 +548,9 @@ export default function ProductsPage() {
             </SelectTrigger>
             <SelectContent className="rounded-2xl border-slate-100 dark:border-white/10 shadow-2xl">
               <SelectItem value="ALL" className="font-bold">ALL CATEGORIES</SelectItem>
-              {CATEGORY_TYPES.map(c => (
-                <SelectItem key={c.value} value={c.value} className="font-bold">
-                  {t(c.value).toUpperCase()}
+              {categories.map(c => (
+                <SelectItem key={c.id} value={c.id} className="font-bold text-xs">
+                  {c.name.toUpperCase()}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -650,7 +647,7 @@ export default function ProductsPage() {
               <div className="p-6 space-y-4">
                 <div className="space-y-1">
                   <div className="text-[10px] uppercase font-black tracking-widest text-indigo-500">
-                    {t((product as any).category)}
+                    {categories.find(c => c.id === (product as any).category_id)?.name || "Unknown"}
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 dark:text-white truncate">{product.name}</h3>
                 </div>
@@ -816,20 +813,19 @@ export default function ProductsPage() {
                     <Layers size={12} className="text-indigo-500" /> {t("category")}
                   </Label>
                   <Select
-                    value={formData.category}
-                    onValueChange={(v: string | null) => v && setFormData({ ...formData, category: v })}
+                    value={formData.category_id}
+                    onValueChange={(v: string | null) => v && setFormData({ ...formData, category_id: v })}
                   >
                     <SelectTrigger className="h-12 rounded-xl bg-slate-50/50 dark:bg-white/[0.02] border-slate-100 dark:border-white/10">
                       <SelectValue placeholder={t("selectCategory")}>
-                        {t(formData.category) || ""}
+                        {categories.find(c => c.id === formData.category_id)?.name || ""}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-slate-100 dark:border-white/10 shadow-2xl">
-                      {CATEGORY_TYPES.map(c => (
-                        <SelectItem key={c.value} value={c.value}>
+                      {categories.map(c => (
+                        <SelectItem key={c.id} value={c.id}>
                           <div className="flex items-center gap-2">
-                            <c.icon size={14} className="text-indigo-500" />
-                            {t(c.value)}
+                            {c.name}
                           </div>
                         </SelectItem>
                       ))}

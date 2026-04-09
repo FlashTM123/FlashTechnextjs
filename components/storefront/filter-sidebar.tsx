@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface FilterSidebarProps {
-  categories: string[];
+  categories: { id: string; name: string }[];
   brands: { id: string; name: string }[];
 }
 
@@ -107,11 +107,11 @@ export function FilterSidebar({ categories, brands }: FilterSidebarProps) {
         <div className="flex flex-wrap lg:flex-col gap-2">
           {categories.map((cat) => (
             <FilterButton
-              key={cat}
-              active={currentCategory === cat}
-              onClick={() => updateFilters({ category: currentCategory === cat ? null : cat })}
+              key={cat.id}
+              active={currentCategory === cat.id}
+              onClick={() => updateFilters({ category: currentCategory === cat.id ? null : cat.id })}
             >
-              {cat}
+              {cat.name}
             </FilterButton>
           ))}
         </div>

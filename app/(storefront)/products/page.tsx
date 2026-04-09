@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma";
 import { ProductCard } from "@/components/storefront/product-card";
 import { FilterSidebar } from "@/components/storefront/filter-sidebar";
 import { Sparkles, PackageSearch } from "lucide-react";
-import { CategoryType } from "@prisma/client";
 
 interface ProductsPageProps {
   searchParams: Promise<{
@@ -20,17 +19,16 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const { category, brand, sort, minPrice, maxPrice, search } = params;
 
   // 1. Fetch filter options (Brands & Categories)
-  const brands = await prisma.brands.findMany({
-    select: { id: true, name: true }
-  });
-
-  const categories = Object.values(CategoryType);
+  const [brands, categories] = await Promise.all([
+    prisma.brands.findMany({ select: { id: true, name: true } }),
+    prisma.category.findMany({ select: { id: true, name: true }, where: { is_active: true } })
+  ]);
 
   // 2. Build Prisma Query
   const where: any = { is_active: true };
 
   if (category) {
-    where.category = category as CategoryType;
+    where.category_id = category;
   }
 
   if (brand) {

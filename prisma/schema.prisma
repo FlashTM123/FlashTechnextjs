@@ -111,15 +111,21 @@ model Brands {
   @@map("brands")
 }
 
-enum CategoryType {
-  SMARTPHONE
-  LAPTOP
-  TABLET
-  SMARTWATCH
-  AUDIO
-  ACCESSORIES
-  COMPONENT
-  OTHER
+
+
+model Category {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  slug        String   @unique
+  icon        String?  @default("Package")
+  description String?  @default("")
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  
+  products    Product[]
+
+  @@map("categories")
 }
 
 model Product {
@@ -135,7 +141,8 @@ model Product {
   brand_id      String   @db.ObjectId
   brand         Brands   @relation(fields: [brand_id], references: [id])
   
-  category      CategoryType @default(SMARTPHONE)
+  category_id   String   @db.ObjectId
+  category      Category @relation(fields: [category_id], references: [id])
   
   specs         Json?    
   
@@ -192,8 +199,12 @@ model Order {
   items           OrderItem[]
   
   total_amount    Float
+  discount_amount Float         @default(0)
   status          OrderStatus   @default(PENDING)
   
+  coupon_id       String?       @db.ObjectId
+  coupon          Coupon?       @relation(fields: [coupon_id], references: [id])
+
   // Thông tin giao hàng
   shipping_address String
   phone_number     String
@@ -206,6 +217,36 @@ model Order {
   updatedAt       DateTime      @updatedAt
 
   @@map("orders")
+}
+
+enum CouponType {
+  PERCENTAGE
+  FIXED
+}
+
+model Coupon {
+  id               String      @id @default(auto()) @map("_id") @db.ObjectId
+  code             String      @unique
+  description      String?
+  type             CouponType  @default(PERCENTAGE)
+  value            Float       // % or fixed amount
+  min_order_amount Float       @default(0)
+  max_discount     Float?      // Cap for percentage coupons
+  
+  start_date       DateTime    @default(now())
+  end_date         DateTime?
+  
+  usage_limit      Int?        // Null = unlimited
+  used_count       Int         @default(0)
+  
+  is_active        Boolean     @default(true)
+  
+  orders           Order[]
+  
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  @@map("coupons")
 }
 
 model OrderItem {
