@@ -2,6 +2,10 @@ import { prisma } from "@/lib/prisma";
 import { Hero } from "@/components/storefront/hero";
 import { CategoryBar } from "@/components/storefront/category-bar";
 import { ProductGrid } from "@/components/storefront/product-grid";
+import { ServiceHighlights } from "@/components/storefront/service-highlights";
+import { BrandWall } from "@/components/storefront/brand-wall";
+import { Testimonials } from "@/components/storefront/testimonials";
+import { FAQSection } from "@/components/storefront/faq.tsx";
 
 export default async function StorefrontHome() {
   // Fetch latest products from Prisma
@@ -30,10 +34,29 @@ export default async function StorefrontHome() {
     take: 4
   });
 
+  // Fetch latest reviews (testimonials) from DB
+  const latestReviews = await prisma.review.findMany({
+    where: {
+      rating: { gte: 4 } // Chỉ lấy đánh giá 4-5 sao để làm testimonial
+    },
+    orderBy: { createdAt: "desc" },
+    take: 6,
+    include: {
+      customer: {
+        select: {
+          full_name: true,
+          avatar: true,
+          tier: true
+        }
+      }
+    }
+  });
+
   return (
     <div className="flex flex-col min-h-screen">
       <Hero />
       <CategoryBar />
+      <ServiceHighlights />
       
       {/* Featured Selection */}
       <ProductGrid 
@@ -43,6 +66,8 @@ export default async function StorefrontHome() {
         limit={4}
       />
 
+      <BrandWall />
+
       {/* New Arrivals */}
       <ProductGrid 
         title="Sản Phẩm Mới"
@@ -50,6 +75,9 @@ export default async function StorefrontHome() {
         products={latestProducts}
         limit={8}
       />
+
+      <Testimonials reviews={latestReviews} />
+      <FAQSection />
 
       {/* Extra Marketing Section */}
       <section className="py-24 bg-indigo-600 relative overflow-hidden">

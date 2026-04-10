@@ -6,6 +6,8 @@ import { ShoppingCart, Eye, Star, Heart, ArrowRight, Sparkles } from "lucide-rea
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { useWishlist } from "@/app/context/wishlist-context";
 
 interface ProductCardProps {
   product: {
@@ -15,11 +17,30 @@ interface ProductCardProps {
     base_price: number;
     images: string[];
     brand: { name: string };
-    category: string;
+    category: any;
   };
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const isFavorite = isInWishlist(product.id);
+
+  const toggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isFavorite) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist({
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        image: product.images[0],
+        price: product.base_price
+      });
+    }
+  };
+
   const formattedPrice = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
@@ -39,7 +60,7 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* Badges */}
         <div className="absolute top-6 left-6 z-10 flex flex-col gap-2">
           <Badge className="bg-white/80 dark:bg-black/50 backdrop-blur-md text-indigo-600 dark:text-indigo-400 border-none px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm">
-            {product.category}
+            {typeof product.category === 'object' ? (product.category as any).name : product.category}
           </Badge>
           {product.base_price > 20000000 && (
              <Badge className="bg-rose-500 text-white border-none px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg shadow-rose-500/20">
@@ -50,12 +71,23 @@ export function ProductCard({ product }: ProductCardProps) {
 
         {/* Hover Actions */}
         <div className="absolute top-6 right-6 z-10 flex flex-col gap-2 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 delay-75">
-          <Button size="icon" className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xl hover:bg-indigo-600 hover:text-white transition-all">
-            <Heart size={18} />
+          <Button 
+            onClick={toggleWishlist}
+            size="icon" 
+            className={cn(
+                "w-10 h-10 rounded-full shadow-xl transition-all",
+                isFavorite 
+                    ? "bg-rose-500 text-white hover:bg-rose-600" 
+                    : "bg-white dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-indigo-600 hover:text-white"
+            )}
+          >
+            <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
           </Button>
-          <Button size="icon" className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xl hover:bg-indigo-600 hover:text-white transition-all">
-            <Eye size={18} />
-          </Button>
+          <Link href={`/product/${product.slug}`}>
+            <Button size="icon" className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xl hover:bg-indigo-600 hover:text-white transition-all">
+              <Eye size={18} />
+            </Button>
+          </Link>
         </div>
 
         <Link href={`/product/${product.slug}`} className="relative h-full w-full block">

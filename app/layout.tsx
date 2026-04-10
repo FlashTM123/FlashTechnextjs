@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "./context/auth-context";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -7,10 +7,10 @@ import { LanguageProvider } from "./context/language-context";
 import { CustomerAuthProvider } from "./context/customer-auth-context";
 import { Toaster } from "sonner";
 
-export const inter = Inter({
-  variable: "--font-inter",
+export const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin", "vietnamese"],
-  weight: ['400', '500', '600', '700', '800', '900'],
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
   display: 'swap',
 });
 
@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 };
 
 import { CartProvider } from "./context/cart-context";
+import { WishlistProvider } from "./context/wishlist-context";
 
 export default function RootLayout({
   children,
@@ -27,16 +28,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html suppressHydrationWarning lang="vi" className={`${inter.variable} h-full antialiased`}>
+    <html suppressHydrationWarning lang="vi" className={`${outfit.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans selection:bg-indigo-100 selection:text-indigo-900 bg-background text-foreground">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <LanguageProvider>
             <AuthProvider>
               <CustomerAuthProvider>
-                <CartProvider>
-                  {children}
-                  <Toaster position="top-right" richColors />
-                </CartProvider>
+                <WishlistProvider>
+                  <CartProvider>
+                    {children}
+                    <Toaster position="top-right" richColors />
+                  </CartProvider>
+                </WishlistProvider>
               </CustomerAuthProvider>
             </AuthProvider>
           </LanguageProvider>

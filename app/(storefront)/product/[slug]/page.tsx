@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { ProductDetails } from "@/components/storefront/product-details";
+import { RelatedProducts } from "@/components/storefront/related-products";
+import { ProductReviews } from "@/components/storefront/product-reviews";
 import Link from "next/link";
 import { ChevronRight, Home } from "lucide-react";
 
@@ -30,9 +32,24 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     where: { slug },
     include: {
       brand: true,
+      category: true,
       variants: {
         orderBy: {
           price: "asc"
+        }
+      },
+      reviews: {
+        include: {
+          customer: {
+            select: {
+              full_name: true,
+              avatar: true,
+              tier: true
+            }
+          }
+        },
+        orderBy: {
+          createdAt: "desc"
         }
       }
     }
@@ -41,6 +58,19 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   if (!product || !product.is_active) {
     notFound();
   }
+
+  // Fetch Related Products (same category, excluding current)
+  const relatedProducts = await prisma.product.findMany({
+    where: {
+      category_id: product.category_id,
+      id: { not: product.id },
+      is_active: true
+    },
+    include: {
+      brand: { select: { name: true } }
+    },
+    take: 4
+  });
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#0A0A0B] pb-32">
@@ -56,6 +86,14 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <Link href="/products" className="hover:text-indigo-600 transition-colors">
               Sản phẩm
             </Link>
+            {product.category && (
+               <>
+                <ChevronRight size={10} className="opacity-50" />
+                <Link href={`/products?category=${product.category.slug}`} className="hover:text-indigo-600 transition-colors truncate max-w-[120px]">
+                  {product.category.name}
+                </Link>
+               </>
+            )}
             <ChevronRight size={10} className="opacity-50" />
             <div className="text-indigo-600 dark:text-indigo-400 max-w-[200px] truncate">
               {product.name}
@@ -64,8 +102,13 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-6 space-y-32">
         <ProductDetails product={product} />
+        
+        <div className="space-y-32">
+          <RelatedProducts products={relatedProducts} />
+          <ProductReviews reviews={product.reviews} />
+        </div>
       </div>
     </div>
   );

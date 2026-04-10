@@ -2,7 +2,21 @@
 
 Một nền tảng quản lý và trải nghiệm mua sắm thương mại điện tử chuyên nghiệp được xây dựng bằng **Next.js 16**, **React 19**, **TypeScript**, **Tailwind CSS 4**, và **Shadcn/ui**.
 
-## 🌟 Mới Nhất: Core Stability & API Synchronization Hub (09/04/2026)
+## 🌟 Tuyệt Đỉnh: Mastery Storefront & Premium Experience (10/04/2026)
+
+- 🏆 **Mastery Phase Completion**:
+  - Triển khai hệ thống **Danh sách yêu thích (Wishlist)** hoàn chỉnh (Context + UI Bento Grid).
+  - Xây dựng bộ mặt thương hiệu với các trang **Giới thiệu (About Us)** và **Liên hệ (Contact)** đẳng cấp quốc tế.
+- 🎨 **Premium UX & Motion**:
+  - Tích hợp **Global Page Transitions** (Framer Motion) giúp chuyển cảnh cực mượt.
+  - Thêm **Top Loading Bar** tinh tế, tối ưu cảm giác phản hồi nhanh (Perceived Performance).
+  - Nâng cấp Typography toàn hệ thống sang font **Outfit** (Modern Tech Font).
+- 🔐 **Security & Stability**:
+  - Sửa lỗi **Google OAuth** (invalid_client), đồng bộ hóa luồng đăng nhập định danh cho khách hàng.
+  - Khắc phục các lỗi Runtime liên quan đến `ChevronRight`, `next/image` domain và các icon Lucide bị thiếu.
+  - Tinh chỉnh trang **Checkout Success** với hiệu ứng xác thực đơn hàng chuyên nghiệp.
+
+## 🌟 Cập Nhật Trước Đó: Core Stability & API Synchronization Hub (09/04/2026)
 
 - 🛠️ **Infrastructure & API Sync**: 
   - Đưa toàn bộ hệ thống quản lý sản phẩm về chuẩn `category_id` (ObjectID), giải quyết triệt để lỗi mất dữ liệu danh mục khi lưu.
@@ -203,6 +217,7 @@ enum Role {
 | **Prisma** | 6 | ORM |
 | **MongoDB** | Latest | Database |
 | **Lucide React** | 1.6.0 | Icons |
+| **Outfit** | Google Fonts | Primary Typography |
 | **React Context** | 19 | State Management |
 | **Framer Motion** | Latest | Premium Animations |
 | **Next.js App Router** | 16.2.1 | Routing |
@@ -347,6 +362,6 @@ MIT License - xem file [LICENSE](LICENSE)
 
 ---
 
-**Last Updated**: April 08, 2026
-**Status**: Active Development - **Premium Storefront & Global Search**
-**Recent Features**: Command-Palette Search (Cmd+K), Advanced Product Catalog, Verified Review System, Unified Storefront Navigation, Optimized UI/UX.
+**Last Updated**: April 10, 2026
+**Status**: Active Development - **Mastery Storefront & Premium UX**
+**Recent Features**: Wishlist System, About/Contact Pages, Page Transitions, Google Authentication, Outfit Typography, Optimized Success Flows.

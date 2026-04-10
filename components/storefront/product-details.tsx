@@ -468,9 +468,9 @@ export function ProductDetails({ product }: ProductDetailsProps) {
                     </div>
                     <h2 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">Thông số kỹ thuật</h2>
                  </div>
-                 <div className="hidden sm:flex text-[10px] font-black uppercase tracking-widest text-slate-400 px-4 py-1.5 rounded-lg border border-slate-100 dark:border-white/5">
-                    {product.category} PRO Series
-                 </div>
+                  <div className="hidden sm:flex text-[10px] font-black uppercase tracking-widest text-slate-400 px-4 py-1.5 rounded-lg border border-slate-100 dark:border-white/5">
+                    {product.category?.name} PRO Series
+                  </div>
               </div>
 
               <div className="relative">

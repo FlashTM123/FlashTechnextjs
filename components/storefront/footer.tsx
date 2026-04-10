@@ -30,14 +30,14 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Quick Links */}
+        {/* Company Links */}
         <div className="space-y-6">
-          <h4 className="text-sm font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white">Danh mục</h4>
+          <h4 className="text-sm font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white">Công ty</h4>
           <ul className="space-y-4">
-            <FooterLink href="/category/LAPTOP" label="Laptops & Gaming" />
-            <FooterLink href="/category/SMARTPHONE" label="Smartphones & AI Phones" />
-            <FooterLink href="/category/TABLET" label="Tablets & Creative Tools" />
-            <FooterLink href="/category/AUDIO" label="Audio & Sound Systems" />
+            <FooterLink href="/about" label="Về FlashTech" />
+            <FooterLink href="/contact" label="Liên hệ hỗ trợ" />
+            <FooterLink href="/products" label="Tất cả sản phẩm" />
+            <FooterLink href="/account/wishlist" label="Danh sách yêu thích" />
           </ul>
         </div>
 
@@ -47,8 +47,8 @@ export function Footer() {
           <ul className="space-y-4">
             <FooterLink href="#" label="Trung tâm bảo hành" />
             <FooterLink href="#" label="Chính sách đổi trả" />
-            <FooterLink href="#" label="Theo dõi đơn hàng" />
-            <FooterLink href="#" label="Tuyển dụng" />
+            <FooterLink href="/account/orders" label="Theo dõi đơn hàng" />
+            <FooterLink href="#" label="Phương thức thanh toán" />
           </ul>
         </div>
 
